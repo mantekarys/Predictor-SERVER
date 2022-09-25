@@ -49,6 +49,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Character\Character.cs" />
+    <Compile Include="Character\Class.cs" />
+    <Compile Include="Map\Map.cs" />
+    <Compile Include="Map\MapObject.cs" />
+    <Compile Include="Map\Obstacle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

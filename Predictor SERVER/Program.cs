@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
+using Predictor_SERVER.Character;
+using Predictor_SERVER.Map;
+using System.Xml.Linq;
+using Newtonsoft.Json;
 
 namespace Predictor_SERVER
 {
@@ -13,8 +17,21 @@ namespace Predictor_SERVER
     {
         protected override void OnMessage(MessageEventArgs e)
         {
-            Console.WriteLine("Received message from Echo client: " + e.Data);
-            Send(e.Data);
+            var z = 2;
+            if (e.Data == "159")
+            {
+                Class c1 = new Class(5,5,5,1,150,300);
+                Class c2 = new Class(5, 5, 5, 1, 150, 50);
+                List<Class> characters = new List<Class>();
+                characters.Add(c1);
+                characters.Add(c2);
+
+                List<MapObject> mapO = new List<MapObject>();
+                var map = new Map.Map("Map1", mapO);
+                var message = JsonConvert.SerializeObject((characters, map));
+                Send(message);
+            }
+            
         }
     }
 
@@ -22,6 +39,10 @@ namespace Predictor_SERVER
     {
         protected override void OnMessage(MessageEventArgs e)
         {
+            if (e.Data == "RequestMap")
+            {
+
+            }
             Console.WriteLine("Received message from EchoAll client: " + e.Data);
             Sessions.Broadcast(e.Data);
         }
