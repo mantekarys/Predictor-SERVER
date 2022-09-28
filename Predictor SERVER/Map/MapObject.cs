@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Predictor_SERVER.Map
 {
-    internal abstract class  MapObject
+    public abstract class  MapObject
     {
         public int size;
         public (int, int) coordinates;

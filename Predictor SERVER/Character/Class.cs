@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Predictor_SERVER.Character
 {
-    internal class Class : Character
+    public class Class : Character
     {
         class Message
         {

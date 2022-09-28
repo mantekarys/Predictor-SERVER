@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Predictor_SERVER.Map
 {
-    internal class Map
+    public class Map
     {
-        public int size = 300;
+        public int size = 700;
         public string name;
         public List<MapObject> mapO;
 

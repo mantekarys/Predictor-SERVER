@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Predictor_SERVER.Character
 {
-    internal abstract class Character
+    public abstract class Character
     {
         public int size;
         public int speed;
