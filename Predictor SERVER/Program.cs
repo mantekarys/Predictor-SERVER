@@ -12,6 +12,9 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 using System.Windows.Forms;
 using System.IO;
+using System.Timers;
+using Timer = System.Timers.Timer;
+using System.Threading;
 
 namespace Predictor_SERVER
 {
@@ -23,8 +26,22 @@ namespace Predictor_SERVER
         public static List<MapObject> mapO = new List<MapObject>();
         public static Map.Map map = new Map.Map("Map1", mapO);
         public static int howMany = 0;
+        public static WebSocketSessionManager sesions;
+        public static bool started = false;
 
-        //public static Class GetCharacter(int which) { return classes[which]; }
+        public static void SendMessages()
+        {
+            Variables.started = true;
+            Timer newTimer = new Timer();
+            newTimer.Elapsed += new ElapsedEventHandler(Broadcast);
+            newTimer.Interval = 100;
+            newTimer.Start();
+        }
+        public static void Broadcast(object sender, EventArgs e)
+        {
+            var message = JsonConvert.SerializeObject((Variables.classes.ToList(), Variables.map));
+            sesions.Broadcast(message);
+        }
 
     }
     public class Echo : WebSocketBehavior
@@ -49,6 +66,15 @@ namespace Predictor_SERVER
                 if (Variables.howMany > 2)
                 {
                     Variables.howMany = 0;
+                }
+                if (!Variables.started)
+                {
+
+                    ThreadStart childref = new ThreadStart(Variables.SendMessages);
+                    Thread childThread = new Thread(childref);
+                    childThread.Start();
+                    Variables.sesions = Sessions;
+                    Variables.SendMessages();
                 }
                 Send(message);
             }
@@ -121,10 +147,9 @@ namespace Predictor_SERVER
             }
             Variables.classes[which] = c;
 
-            List<MapObject> mapO = new List<MapObject>();
-            map = new Map.Map("Map1", mapO);
-            var message = JsonConvert.SerializeObject((Variables.classes.ToList(), map));
-            Sessions.Broadcast(message);
+            var message = JsonConvert.SerializeObject((Variables.classes.ToList(), Variables.map));
+            Variables.sesions = Sessions;
+            //Sessions.Broadcast(message);
 
         }
     }
