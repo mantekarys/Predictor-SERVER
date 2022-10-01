@@ -121,7 +121,7 @@ namespace Predictor_SERVER
                         c.coordinates.Item1 = map.size - c.size + 5;
                     }
                 }
-                else if (keyData == Keys.Up)
+                if (keyData == Keys.Up)
                 {
                     if (c.coordinates.Item2 > c.speed)
                     {
