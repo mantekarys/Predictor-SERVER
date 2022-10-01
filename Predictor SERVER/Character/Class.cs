@@ -15,7 +15,6 @@ namespace Predictor_SERVER.Character
         {
             List<string> buttons;
         }
-
         public Class(int size, int speed, int health, int damage, int x,int y)
         {
             this.size = size;
@@ -26,6 +25,7 @@ namespace Predictor_SERVER.Character
 
             //send other parameters on start or when took an upgrade
         }
+        public Class() { }
 
         public override void move()//event
         {

@@ -15,19 +15,24 @@ using System.IO;
 using System.Timers;
 using Timer = System.Timers.Timer;
 using System.Threading;
+using Predictor_SERVER.Server;
+using System.Text.RegularExpressions;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace Predictor_SERVER
 {
     public static class Variables
     {
-        public static List<Class> classes = new List<Class>() { new Class(15, 10, 5, 1, 343, 10), new Class(15, 10, 5, 1, 343, 685) };
-        public static Class c1 = new Class(15, 10, 5, 1, 343, 10);//pradines coord pakeist nes paskui kai su walls buna keistai gal i speed?
-        public static Class c2 = new Class(15, 10, 5, 1, 343, 685);//kaska su tom class daryt
+        public static List<Class> classes = new List<Class>(); //{ new Class(15, 10, 5, 1, 343, 10), new Class(15, 10, 5, 1, 343, 685) };
+        //public static Class c1 = new Class(15, 10, 5, 1, 343, 10);//pradines coord pakeist nes paskui kai su walls buna keistai gal i speed?
+        //public static Class c2 = new Class(15, 10, 5, 1, 343, 685);//kaska su tom class daryt
         public static List<MapObject> mapO = new List<MapObject>();
         public static Map.Map map = new Map.Map("Map1", mapO);
         public static int howMany = 0;
         public static WebSocketSessionManager sesions;
         public static bool started = false;
+
+        public static List<Server.Match> matches = new List<Server.Match>();
 
         public static void SendMessages()
         {
@@ -58,7 +63,68 @@ namespace Predictor_SERVER
         }
         protected override void OnMessage(MessageEventArgs e)
         {
-            if (e.Data == "159")
+            if (e.Data.Length > 3)
+            {
+                int which = -1;
+                int code;
+                string text;
+                int matchId = -1;
+                int ready = 0;
+                int count = e.Data.Count(x => x == ':');
+                if (count == 2)
+                {
+                    (code, text) = JsonConvert.DeserializeObject<(int, string)>(e.Data);
+                }
+                else//redies up
+                {
+                    (code, matchId, text, ready, which) = JsonConvert.DeserializeObject<(int, int, string, int, int)>(e.Data);
+                }
+
+
+
+                if (code == 752)//creates match
+                {
+                    matchId = Variables.matches.Count;
+                    Variables.matches.Add(new Server.Match(matchId, text));
+                    var message = JsonConvert.SerializeObject((matchId, Variables.howMany++));
+                    Send(message);
+                }
+                if (code == 876)////joined match
+                {
+                    matchId= int.Parse(text);
+                    Variables.matches[matchId].peopleAmount++;
+                    var message = JsonConvert.SerializeObject(Variables.howMany++);
+                    Send(message);
+                }
+                if (code == 545)//readies up
+                {
+                    Variables.matches[matchId].ready += ready;
+                    Variables.classes.Add(ClassCreator.pickCreator(text, 15,which));
+                    if (Variables.matches[matchId].ready == Variables.matches[matchId].peopleAmount)
+                    {
+                        var message = JsonConvert.SerializeObject((Variables.classes.ToList(), Variables.map));
+
+                        if (!Variables.started)//gal istrint ta if ir cia apskritai siuncia vissiems o turetu tik tiems kuriu matchas
+                        {
+
+                            ThreadStart childref = new ThreadStart(Variables.SendMessages);
+                            Thread childThread = new Thread(childref);
+                            childThread.Start();
+                            Variables.sesions = Sessions;
+                            Variables.SendMessages();
+                        }
+                        //Send(message);
+                        Sessions.Broadcast(message);
+                    }
+                    //else
+                    //{
+                    //    var message = JsonConvert.SerializeObject(-1);
+                    //    Send(message);
+                    //}
+                }
+
+            }
+            if (e.Data == "159")//map start
             {
 
                 List<MapObject> mapO = new List<MapObject>();
@@ -76,6 +142,17 @@ namespace Predictor_SERVER
                     Variables.sesions = Sessions;
                     Variables.SendMessages();
                 }
+                Send(message);
+            }
+            if (e.Data == "999")//match list
+            {
+                List<(int, string)> matchIds = new List<(int, string)>();
+                foreach (var item in Variables.matches)
+                {
+                    matchIds.Add((item.id, item.name));
+                }
+                
+                var message = JsonConvert.SerializeObject(matchIds);
                 Send(message);
             }
      

@@ -52,11 +52,19 @@
   <ItemGroup>
     <Compile Include="Character\Character.cs" />
     <Compile Include="Character\Class.cs" />
+    <Compile Include="Character\ClassCreator.cs" />
+    <Compile Include="Character\Gunner.cs" />
+    <Compile Include="Character\GunnerCreator.cs" />
+    <Compile Include="Character\Rogue.cs" />
+    <Compile Include="Character\RogueCreator.cs" />
+    <Compile Include="Character\Tank.cs" />
+    <Compile Include="Character\TankCreator.cs" />
     <Compile Include="Map\Map.cs" />
     <Compile Include="Map\MapObject.cs" />
     <Compile Include="Map\Obstacle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server\Match.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
