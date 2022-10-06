@@ -251,6 +251,7 @@ namespace Predictor_SERVER
 
     class Program
     {
+
         static void Main(string[] args)
         {
             List<Class> classes = new List<Class>();
@@ -259,6 +260,11 @@ namespace Predictor_SERVER
             classes.Add(c1);
             classes.Add(c2);
             var message = JsonConvert.SerializeObject((classes, 0));
+
+            // Testavimas abstract factory // 
+            AbstractFactoryTestCalss test = new AbstractFactoryTestCalss("S","P"); // (speed = "S"/Attackspeed = "AS"/damage = "D", Item = "I"/ PowerUp = "P")
+            test.Tester();
+            // abstract factory end //
 
 
             WebSocketServer wssv = new WebSocketServer("ws://127.0.0.1:7890");

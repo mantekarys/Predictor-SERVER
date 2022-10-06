@@ -10,18 +10,32 @@ namespace Predictor_SERVER.Map
     {
         private Item item = null;
         private PowerUp powerUp = null;
-        private readonly string pickuptype = "I"; // potion = P , item = I
-        private PickUpCreator _pickUpCreator = PickUpCreator.PickUpCreate("S"); // speed = S , Attackspeed = AS , damage = D
-        if(pickuptype == "I" && _pickUpCreator!=null){
-            _pickUpCreator.createItem();
-        }
-        else if(pickuptype == "P" && _pickUpCreator!=null){
-            _pickUpCreator.createPowerUp();
-        }
-        else
+        private string pickuptype = "";
+        private string creatortype= "";
+        private PickUpCreator _pickUpCreator = null;
+        public void Tester()
         {
-             Console.WriteLine("error chosen pickup doesn't exist");
+            _pickUpCreator = PickUpCreator.PickUpCreate(creatortype); 
+            switch (pickuptype)
+            {
+                case ("I"):
+                    item = _pickUpCreator.createItem();
+                    break;
+                case ("P"):
+                    powerUp = _pickUpCreator.createPowerUp();
+                    break;
+                default:
+                    Console.WriteLine("error chosen pickup doesn't exist");
+                    break;
+
+            }
         }
 
+        public AbstractFactoryTestCalss(string creator, string type)
+        {
+            pickuptype = type;
+            creatortype = creator;
+
+        }
     }
 }
