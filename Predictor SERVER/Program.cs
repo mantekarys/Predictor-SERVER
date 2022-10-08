@@ -47,11 +47,11 @@ namespace Predictor_SERVER
         public static void Broadcast(int matchId)//object sender, EventArgs e
         {
             var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map));
-            //foreach (var item in Variables.matchIds[matchId])
-            //{
-            //    sesions.SendTo(message, item);
-            //}
-            sesions.Broadcast(message);
+            foreach (var item in Variables.matchIds[matchId])
+            {
+                sesions.SendTo(message, item);
+            }
+            //sesions.Broadcast(message);
         }
 
     }
@@ -72,18 +72,27 @@ namespace Predictor_SERVER
             if (e.Data.Length > 3)
             {
                 int which = -1;
-                int code;
-                string text;
+                int code = -1;
+                string text = "";
                 int matchId = -1;
                 int ready = 0;
+
+                HashSet<Keys> keys = new HashSet<Keys>();
+                MouseEventArgs mouseClick;
+                var map = Variables.map;
+
                 int count = e.Data.Count(x => x == ':');
                 if (count == 2)
                 {
                     (code, text) = JsonConvert.DeserializeObject<(int, string)>(e.Data);
                 }
-                else//redies up
+                else if (count == 5)//redies up
                 {
                     (code, matchId, text, ready, which) = JsonConvert.DeserializeObject<(int, int, string, int, int)>(e.Data);
+                }
+                else //gets game info
+                {
+                    (keys, mouseClick, which, matchId) = JsonConvert.DeserializeObject<(HashSet<Keys>, MouseEventArgs mouseClickp, int, int)>(e.Data);
                 }
 
 
@@ -91,8 +100,8 @@ namespace Predictor_SERVER
                 if (code == 752)//creates match
                 {
                     matchId = Variables.matches.Count;
-                    //Variables.matchIds.Add(new List<string>());
-                    //Variables.matchIds[matchId].Add(ID);
+                    Variables.matchIds.Add(new List<string>());//
+                    Variables.matchIds[matchId].Add(ID);//
                     Variables.matches.Add(new Server.Match(matchId, text));
                     Variables.classes.Add(new List<Class>());
                     var message = JsonConvert.SerializeObject((matchId, Variables.matches[matchId].peopleAmount-1));
@@ -101,7 +110,7 @@ namespace Predictor_SERVER
                 if (code == 876)////joined match
                 {
                     matchId= int.Parse(text);
-                    //Variables.matchIds[matchId].Add(ID);
+                    Variables.matchIds[matchId].Add(ID);//
                     var message = JsonConvert.SerializeObject(Variables.matches[matchId].peopleAmount++);
                     Send(message);
                 }
@@ -113,28 +122,71 @@ namespace Predictor_SERVER
                     {
                         var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map));
 
-                        if (!Variables.started)//gal istrint ta if ir cia apskritai siuncia vissiems o turetu tik tiems kuriu matchas
-                        {
-
-                            //ThreadStart childref = new ThreadStart(Variables.SendMessages);
-                            //Thread childThread = new Thread(childref);
-                            //childThread.Start();
-
-                            var thread = new Thread(
+                        var thread = new Thread(
                                 () => Variables.SendMessages(matchId));
-                            thread.Start();
-                            Variables.sesions = Sessions;
-                        }
+                        thread.Start();
+                        Variables.sesions = Sessions;
                         //Send(message);
                         Sessions.Broadcast(message);
                     }
-                    //else
-                    //{
-                    //    var message = JsonConvert.SerializeObject(-1);
-                    //    Send(message);
-                    //}
+                    
                 }
+                if (code == -1)////game movement
+                {
 
+
+                    var c = Variables.classes[matchId][which];//sita reik susirast kuris siunte ir galbut iskart dirbt su listu
+                    int pad = 5;
+                    foreach (var keyData in keys)
+                    {
+                        if (keyData == Keys.Left)
+                        {
+                            if (c.coordinates.Item1 > c.speed)
+                            {
+                                c.coordinates.Item1 -= c.speed;
+                            }
+                            else
+                            {
+                                c.coordinates.Item1 = pad;
+                            }
+                        }
+                        else if (keyData == Keys.Right)
+                        {
+                            if (c.coordinates.Item1 + c.speed + c.size < map.size)
+                            {
+                                c.coordinates.Item1 += c.speed;
+                            }
+                            else
+                            {
+                                c.coordinates.Item1 = map.size - c.size + 5;
+                            }
+                        }
+                        if (keyData == Keys.Up)
+                        {
+                            if (c.coordinates.Item2 > c.speed)
+                            {
+                                c.coordinates.Item2 -= c.speed;
+                            }
+                            else
+                            {
+                                c.coordinates.Item2 = pad;
+                            }
+
+                        }
+                        else if (keyData == Keys.Down)
+                        {
+                            if (c.coordinates.Item2 + c.speed + c.size < map.size)
+                            {
+                                c.coordinates.Item2 += c.speed;
+                            }
+                            else
+                            {
+                                c.coordinates.Item2 = map.size - c.size + 5;
+                            }
+                        }
+                    }
+                    Variables.classes[matchId][which] = c;
+                }
             }
             if (e.Data == "159")//map start
             {
@@ -240,11 +292,7 @@ namespace Predictor_SERVER
             }
             Variables.classes[matchId][which] = c;
 
-            var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map));
-            Variables.sesions = Sessions;
-            
-            var z = this.Context;
-            //Sessions.Broadcast(message);
+            //var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map));
 
         }
     }
