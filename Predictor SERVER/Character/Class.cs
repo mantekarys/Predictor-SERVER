@@ -54,6 +54,11 @@ namespace Predictor_SERVER.Character
         {
             this.inventory.Add(item);
         }
+        public void UseItem()
+        {
+
+        }
+
         public override void move()//event
         {
             using (WebSocket ws = new WebSocket("ws://127.0.0.1:7890/EchoAll"))

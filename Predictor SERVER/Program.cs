@@ -33,7 +33,6 @@ namespace Predictor_SERVER
         public static WebSocketSessionManager sesions;
         public static bool started = false;
         public static List<PickUp> pickables = new List<PickUp>();
-
         public static List<Server.Match> matches = new List<Server.Match>();
         public static List<List<string>> matchIds = new List<List<string>>();
 
@@ -261,12 +260,6 @@ namespace Predictor_SERVER
             classes.Add(c1);
             classes.Add(c2);
             var message = JsonConvert.SerializeObject((classes, 0));
-
-            // Testavimas abstract factory // 
-            AbstractFactoryTestCalss test = new AbstractFactoryTestCalss("S","P"); // (speed = "S"/Attackspeed = "AS"/damage = "D", Item = "I"/ PowerUp = "P")
-            test.Tester();
-            // abstract factory end //
-
 
             WebSocketServer wssv = new WebSocketServer("ws://127.0.0.1:7890");
    
