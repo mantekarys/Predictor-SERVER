@@ -11,6 +11,7 @@ namespace Predictor_SERVER.Character
 {
     public class Class : Character
     {
+        public WeaponAlgorithm weapon;
         class Message
         {
             List<string> buttons;
@@ -37,6 +38,11 @@ namespace Predictor_SERVER.Character
                 //var mes = JsonConvert.SerializeObject<Message>(e.Data);
                 //ws.Send(mes);
             }
+        }
+
+        public void setWeaponAlgorithm(WeaponAlgorithm weapon)
+        {
+            this.weapon = weapon;
         }
     }
 }
