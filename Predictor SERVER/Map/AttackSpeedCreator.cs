@@ -8,14 +8,14 @@ namespace Predictor_SERVER.Map
 {
     internal class AttackSpeedCreator : PickUpCreator
     {
-        public override Item createItem() 
+        public override Item createItem((int,int) cord) 
         { 
-            return new AttackSpeedPotion();
+            return new AttackSpeedPotion( cord);
         }
 
-        public override PowerUp createPowerUp() 
+        public override PowerUp createPowerUp((int, int) cord) 
         { 
-            return new AttackSpeedPowerUp();
+            return new AttackSpeedPowerUp(cord);
         }
     }
 }

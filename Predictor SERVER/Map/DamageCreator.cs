@@ -8,14 +8,14 @@ namespace Predictor_SERVER.Map
 {
     internal class DamageCreator : PickUpCreator
     {
-        public override Item createItem()
+        public override Item createItem((int,int)cord)
         {
-            return new DamagePotion();
+            return new DamagePotion(cord);
         }
 
-        public override PowerUp createPowerUp()
+        public override PowerUp createPowerUp((int,int) cord)
         {
-            return new DamagePowerUp();
+            return new DamagePowerUp(cord);
         }
     }
 }

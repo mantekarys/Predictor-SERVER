@@ -2,20 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Predictor_SERVER.Character;
 
 namespace Predictor_SERVER.Map
 {
     internal class SpeedPotion : Item
     {
-        public override int boostPercent { get; set; }
         public override void Use()
         {
 
         }
-        public SpeedPotion()
+        public override void pickedUp(Class character)
         {
+            character.AddToInventory(this);
+        }
 
+        public SpeedPotion((int, int) position)
+        {
+            coordinates = position;
         }
     }
 }

@@ -8,19 +8,19 @@ namespace Predictor_SERVER.Map
 {
     internal abstract class PickUpCreator
     {
-        public abstract Item createItem();
+        public abstract Item createItem((int,int)cord);
 
-        public abstract PowerUp createPowerUp();
+        public abstract PowerUp createPowerUp((int, int) cord);
 
-        public static PickUpCreator PickUpCreate(string type)
+        public static PickUpCreator PickUpCreate(int type)
         {
             switch (type)
             {
-                case "S":
+                case 0:
                     return new SpeedCreator();
-                case "AS":
+                case 1:
                     return new AttackSpeedCreator();
-                case "D":
+                case 2:
                     return new DamageCreator();
                 default:
                     return null;

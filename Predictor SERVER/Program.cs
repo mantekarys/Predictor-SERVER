@@ -32,6 +32,7 @@ namespace Predictor_SERVER
         public static int howMany = 0;
         public static WebSocketSessionManager sesions;
         public static bool started = false;
+        public static List<PickUp> pickables = new List<PickUp>();
 
         public static List<Server.Match> matches = new List<Server.Match>();
         public static List<List<string>> matchIds = new List<List<string>>();

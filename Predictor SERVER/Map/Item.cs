@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Predictor_SERVER.Character;
 
 namespace Predictor_SERVER.Map
 {
-    internal abstract class Item
+    public abstract class Item : PickUp
     {
         
-        public abstract int boostPercent { get; set; } // nustatyti kokiam stiprumui gal?? 
         public abstract void Use();
+
+        // Same as powerup no idea if works like imagined
+
 
     }
 }

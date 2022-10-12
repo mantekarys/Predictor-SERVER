@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Predictor_SERVER.Character;
 
 namespace Predictor_SERVER.Map
 {
-    internal abstract class PowerUp
+    public abstract class PowerUp : PickUp
     {
+        // No idea if might work, needs testing
+
     }
 }

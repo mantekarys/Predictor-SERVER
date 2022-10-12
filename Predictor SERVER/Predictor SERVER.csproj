@@ -55,11 +55,11 @@
     <Compile Include="Character\ClassCreator.cs" />
     <Compile Include="Character\Gunner.cs" />
     <Compile Include="Character\GunnerCreator.cs" />
+    <Compile Include="Character\Npc.cs" />
     <Compile Include="Character\Rogue.cs" />
     <Compile Include="Character\RogueCreator.cs" />
     <Compile Include="Character\Tank.cs" />
     <Compile Include="Character\TankCreator.cs" />
-    <Compile Include="Map\AbstractFactoryTestCalss.cs" />
     <Compile Include="Map\AttackSpeedCreator.cs" />
     <Compile Include="Map\AttackSpeedPotion.cs" />
     <Compile Include="Map\AttackSpeedPowerUp.cs" />
