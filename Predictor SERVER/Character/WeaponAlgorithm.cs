@@ -10,6 +10,6 @@ namespace Predictor_SERVER.Character
     {
         public string name;
         public int attackSpeed;
-        public abstract void attack();
+        public abstract Projectile attack(Class attacker, int direction);
     }
 }

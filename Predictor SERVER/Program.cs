@@ -32,7 +32,7 @@ namespace Predictor_SERVER
         public static int howMany = 0;
         public static WebSocketSessionManager sesions;
         public static bool started = false;
-
+        public static List<List<Projectile>> projectiles = new List<List<Projectile>>();
         public static List<Server.Match> matches = new List<Server.Match>();
         public static List<List<string>> matchIds = new List<List<string>>();
 
@@ -41,12 +41,32 @@ namespace Predictor_SERVER
             Variables.started = true;
             Timer newTimer = new Timer();
             newTimer.Elapsed += delegate { Broadcast(matchId); };//new ElapsedEventHandler(Broadcast,5);
-            newTimer.Interval = 100;
+            newTimer.Interval = 20;
             newTimer.Start();
         }
         public static void Broadcast(int matchId)//object sender, EventArgs e
         {
-            var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map));
+            foreach (var projectile in projectiles[matchId].ToList())
+            {
+                var last = projectile.coordinates;
+                var current = projectile.move();
+                var dif = (last.Item1 - current.Item1, last.Item2 - current.Item2);
+                //foreach (var obj in classes[matchId])
+                //{
+                //    var dist = (last.Item1 - obj.coordinates.Item1, last.Item2 - obj.coordinates.Item2);
+                //    if ()
+                //    {
+
+                //    }
+                //}
+
+                if (current.Item1 > 700 || current.Item2 > 700 || current.Item1 < 5 || current.Item2 < 5)
+                {
+                    projectiles[matchId].Remove(projectile);
+                }
+
+            }
+            var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map, Variables.projectiles[matchId].ToList()));
             foreach (var item in Variables.matchIds[matchId])
             {
                 sesions.SendTo(message, item);
@@ -78,7 +98,7 @@ namespace Predictor_SERVER
                 int ready = 0;
 
                 HashSet<Keys> keys = new HashSet<Keys>();
-                MouseEventArgs mouseClick;
+                (int, int) mouse = (0,0);
                 var map = Variables.map;
 
                 int count = e.Data.Count(x => x == ':');
@@ -92,7 +112,7 @@ namespace Predictor_SERVER
                 }
                 else //gets game info
                 {
-                    (keys, mouseClick, which, matchId) = JsonConvert.DeserializeObject<(HashSet<Keys>, MouseEventArgs mouseClickp, int, int)>(e.Data);
+                    (keys, mouse, which, matchId) = JsonConvert.DeserializeObject<(HashSet<Keys>, (int, int) , int, int)>(e.Data);
                 }
 
 
@@ -104,6 +124,7 @@ namespace Predictor_SERVER
                     Variables.matchIds[matchId].Add(ID);//
                     Variables.matches.Add(new Server.Match(matchId, text));
                     Variables.classes.Add(new List<Class>());
+                    Variables.projectiles.Add(new List<Projectile>());
                     var message = JsonConvert.SerializeObject((matchId, Variables.matches[matchId].peopleAmount-1));
                     Send(message);
                 }
@@ -120,7 +141,7 @@ namespace Predictor_SERVER
                     Variables.classes[matchId].Add(ClassCreator.pickCreator(text, 15,which));
                     if (Variables.matches[matchId].ready == Variables.matches[matchId].peopleAmount)
                     {
-                        var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map));
+                        var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map, Variables.projectiles[matchId].ToList()));
 
                         var thread = new Thread(
                                 () => Variables.SendMessages(matchId));
@@ -184,7 +205,41 @@ namespace Predictor_SERVER
                                 c.coordinates.Item2 = map.size - c.size + 5;
                             }
                         }
+                        if (keyData == Keys.LButton)
+                        {
+                            if (DateTime.Now.Ticks / 10000 - c.lastAttack.Ticks / 10000 > c.weapon.attackSpeed)
+                            {
+                                int direction;
+                                int x = mouse.Item1 - c.coordinates.Item1;
+                                int y = mouse.Item2 - c.coordinates.Item2;
+                                if (Math.Abs(x) > Math.Abs(y))
+                                {
+                                    if (x > 0)
+                                    {
+                                        direction = 1;
+                                    }
+                                    else
+                                    {
+                                        direction = 3;
+                                    }
+                                }
+                                else
+                                {
+                                    if (y > 0)
+                                    {
+                                        direction = 2;
+                                    }
+                                    else
+                                    {
+                                        direction = 0;
+                                    }
+                                }
+                                Variables.projectiles[matchId].Add(c.attack(direction));
+                            }
+                        }
                     }
+              
+                    
                     Variables.classes[matchId][which] = c;
                 }
             }

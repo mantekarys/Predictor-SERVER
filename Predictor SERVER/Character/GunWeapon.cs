@@ -13,9 +13,9 @@ namespace Predictor_SERVER.Character
             this.name = name;
             this.attackSpeed = attackSpeed;
         }
-        public override void attack()
+        public override Projectile attack(Class attacker, int direction)
         {
-            throw new NotImplementedException();
+            return new Projectile(20, 8, attacker.coordinates, direction, attacker);
         }
     }
 }
