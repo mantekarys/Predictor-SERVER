@@ -45,7 +45,7 @@ namespace Predictor_SERVER
             Variables.started = true;
             Timer newTimer = new Timer();
             newTimer.Elapsed += delegate { Broadcast(matchId); };//new ElapsedEventHandler(Broadcast,5);
-            newTimer.Interval = 100;
+            newTimer.Interval = 20;
             newTimer.Start();
         }
         public static void Broadcast(int matchId)//object sender, EventArgs e
@@ -127,48 +127,48 @@ namespace Predictor_SERVER
         //    }
         //    return false;
         //}
-        public int collisionObstacle(int xCoord, int yCoord, int size, List<Obstacle> obstacles)
-        {
-            RectangleF cRegion = new Rectangle(xCoord, yCoord, size, size);
+        //public int collisionObstacle(int xCoord, int yCoord, int size, List<Obstacle> obstacles)
+        //{
+        //    RectangleF cRegion = new Rectangle(xCoord, yCoord, size, size);
 
-            foreach (var obs in obstacles)
-            {
-                RectangleF obsRegion = new Rectangle(obs.coordinates.Item1, obs.coordinates.Item2, obs.size, obs.size);
-                RectangleF intersectRectangleF = RectangleF.Intersect(cRegion, obsRegion);
+        //    foreach (var obs in obstacles)
+        //    {
+        //        RectangleF obsRegion = new Rectangle(obs.coordinates.Item1, obs.coordinates.Item2, obs.size, obs.size);
+        //        RectangleF intersectRectangleF = RectangleF.Intersect(cRegion, obsRegion);
 
-                if (intersectRectangleF.Height != 0 || intersectRectangleF.Width != 0)
-                {
-                    if (intersectRectangleF.Height > intersectRectangleF.Width)
-                    {
-                        return 1;
-                    }
-                    else if (intersectRectangleF.Width > intersectRectangleF.Height)
-                    {
-                        return 2;
-                    }
-                    else return 3;
-                }
-            }
-            return 0;
-        }
+        //        if (intersectRectangleF.Height != 0 || intersectRectangleF.Width != 0)
+        //        {
+        //            if (intersectRectangleF.Height > intersectRectangleF.Width)
+        //            {
+        //                return 1;
+        //            }
+        //            else if (intersectRectangleF.Width > intersectRectangleF.Height)
+        //            {
+        //                return 2;
+        //            }
+        //            else return 3;
+        //        }
+        //    }
+        //    return 0;
+        //}
 
-        public void collisionTrap(int xCoord, int yCoord, int size, List<Trap> trap, int matchId)
-        {
-            RectangleF cRegion = new Rectangle(xCoord, yCoord, size, size);
+        //public void collisionTrap(int xCoord, int yCoord, int size, List<Trap> trap, int matchId)
+        //{
+        //    RectangleF cRegion = new Rectangle(xCoord, yCoord, size, size);
 
-            for (int i = 0; i < trap.Count; i++)
+        //    for (int i = 0; i < trap.Count; i++)
 
-            {
-                RectangleF trpRegion = new Rectangle(trap[i].coordinates.Item1, trap[i].coordinates.Item2, trap[i].size, trap[i].size);
-                RectangleF intersectRectangleF = RectangleF.Intersect(cRegion, trpRegion);
+        //    {
+        //        RectangleF trpRegion = new Rectangle(trap[i].coordinates.Item1, trap[i].coordinates.Item2, trap[i].size, trap[i].size);
+        //        RectangleF intersectRectangleF = RectangleF.Intersect(cRegion, trpRegion);
 
-                if (intersectRectangleF.Height != 0 || intersectRectangleF.Width != 0)
-                {
-                    Variables.traps[matchId].RemoveAt(i);// add line to explode/deal damage;
-                    //c.takeDamage(trap[i].damage);
-                }
-            }
-        }
+        //        if (intersectRectangleF.Height != 0 || intersectRectangleF.Width != 0)
+        //        {
+        //            Variables.traps[matchId].RemoveAt(i);// add line to explode/deal damage;
+        //            //c.takeDamage(trap[i].damage);
+        //        }
+        //    }
+        //}
         public Echo()
         {
 
@@ -255,35 +255,19 @@ namespace Predictor_SERVER
 
 
                     var c = Variables.classes[matchId][which];//sita reik susirast kuris siunte ir galbut iskart dirbt su listu
+
                     var obstacles = Variables.obstacles[matchId];
                     int pad = 5;
                     foreach (var keyData in keys)
                     {
-                        var cllsn = collisionObstacle(c.coordinates.Item1, c.coordinates.Item2, c.size, obstacles);
-                        collisionTrap(c.coordinates.Item1, c.coordinates.Item2, c.size, Variables.traps[matchId], matchId);
+                        var tempC = c.coordinates;
                         if (keyData == Keys.Left)
                         {
 
-                            if (cllsn != 0)
-                            {
-                                switch (cllsn)
-                                {
-                                    case 1:
-                                        c.coordinates.Item1 += c.speed * 2;
-                                        break;
-                                    case 2:
-                                        c.coordinates.Item1 -= c.speed * 2;
-                                        break;
-                                    case 3:
-                                        c.coordinates.Item1 += c.speed * 2;
-                                        break;
-                                }
-                            }
-                            else if (c.coordinates.Item1 > c.speed)
+                            if (c.coordinates.Item1 > c.speed)
                             {
                                 c.coordinates.Item1 -= c.speed;
                             }
-
                             else
                             {
                                 c.coordinates.Item1 = pad;
@@ -291,22 +275,7 @@ namespace Predictor_SERVER
                         }
                         else if (keyData == Keys.Right)
                         {
-                            if (cllsn != 0)
-                            {
-                                switch (cllsn)
-                                {
-                                    case 1:
-                                        c.coordinates.Item1 -= c.speed * 2;
-                                        break;
-                                    case 2:
-                                        c.coordinates.Item1 += c.speed * 2;
-                                        break;
-                                    case 3:
-                                        c.coordinates.Item1 -= c.speed * 2;
-                                        break;
-                                }
-                            }
-                            else if(c.coordinates.Item1 + c.speed + c.size < map.size)
+                            if(c.coordinates.Item1 + c.speed + c.size < map.size)
                             {
                                 c.coordinates.Item1 += c.speed;
                             }
@@ -317,22 +286,7 @@ namespace Predictor_SERVER
                         }
                         if (keyData == Keys.Up)
                         {
-                            if (cllsn != 0)
-                            {
-                                switch (cllsn)
-                                {
-                                    case 1:
-                                        c.coordinates.Item2 -= c.speed * 2;
-                                        break;
-                                    case 2:
-                                        c.coordinates.Item2 += c.speed * 2;
-                                        break;
-                                    case 3:
-                                        c.coordinates.Item2 += c.speed * 2;
-                                        break;
-                                }
-                            }
-                            else if(c.coordinates.Item2 > c.speed)
+                            if(c.coordinates.Item2 > c.speed)
                             {
                                 c.coordinates.Item2 -= c.speed;
                             }
@@ -344,22 +298,7 @@ namespace Predictor_SERVER
                         }
                         else if (keyData == Keys.Down)
                         {
-                            if (cllsn != 0)
-                            {
-                                switch (cllsn)
-                                {
-                                    case 1:
-                                        c.coordinates.Item2 += c.speed * 2;
-                                        break;
-                                    case 2:
-                                        c.coordinates.Item2 -= c.speed * 2;
-                                        break;
-                                    case 3:
-                                        c.coordinates.Item2 -= c.speed * 2;
-                                        break;
-                                }
-                            }
-                            else if(c.coordinates.Item2 + c.speed + c.size < map.size)
+                            if(c.coordinates.Item2 + c.speed + c.size < map.size)
                             {
                                 c.coordinates.Item2 += c.speed;
                             }
@@ -368,7 +307,34 @@ namespace Predictor_SERVER
                                 c.coordinates.Item2 = map.size - c.size + 5;
                             }
                         }
+                        foreach (var obs in obstacles)
+                        {
+                            var k = obs.collision(tempC, c.coordinates, c.size);
+                            var diff = (tempC.Item1 - c.coordinates.Item1, tempC.Item2 - c.coordinates.Item2) ;
+                            if (k != (-1, -1))
+                            {
+                                if (diff.Item1 == 0)
+                                {
+                                    c.coordinates.Item2 = k.Item2;
+                                }
+                                else
+                                {
+                                    c.coordinates.Item1 = k.Item1;
+                                } 
+                            }
+                        }
+                        for (int i = 0; i < Variables.traps[matchId].Count; i++)
+                        {
+                            if (Variables.traps[matchId][i].collision(tempC, c.coordinates, c.size))
+                            {
+                                Variables.traps[matchId].RemoveAt(i);
+                            }
+                        } 
+
+
                     }
+                    //var cllsn = collisionObstacle(c.coordinates.Item1, c.coordinates.Item2, c.size, obstacles);
+                    //collisionTrap(c.coordinates.Item1, c.coordinates.Item2, c.size, Variables.traps[matchId], matchId);
                     Variables.classes[matchId][which] = c;
                 }
             }
