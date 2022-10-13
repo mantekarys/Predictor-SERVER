@@ -30,6 +30,9 @@ namespace Predictor_SERVER
         //public static Class c1 = new Class(15, 10, 5, 1, 343, 10);//pradines coord pakeist nes paskui kai su walls buna keistai gal i speed?
         //public static Class c2 = new Class(15, 10, 5, 1, 343, 685);//kaska su tom class daryt
         public static List<MapObject> mapO = new List<MapObject>();
+        //public static List<List<MapObject>> mapObjects = new List<List<MapObject>>();
+        public static List<List<Trap>> traps = new List<List<Trap>>();
+        public static List<List<Obstacle>> obstacles = new List<List<Obstacle>>();
         public static Map.Map map = new Map.Map("Map1", mapO);
         public static int howMany = 0;
         public static WebSocketSessionManager sesions;
@@ -80,13 +83,48 @@ namespace Predictor_SERVER
                 }
 
             }
-            var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map, Variables.pickables[matchId].ToList(), Variables.projectiles[matchId].ToList()));
+            var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map, Variables.pickables[matchId].ToList(), Variables.projectiles[matchId].ToList(), Variables.traps[matchId].ToList(), Variables.obstacles[matchId].ToList()));
             foreach (var item in Variables.matchIds[matchId])
             {
                 sesions.SendTo(message, item);
             }
             //sesions.Broadcast(message);
         }
+
+        public static List<Obstacle> createObstacles()
+        {
+            List<Obstacle> matchObstacles = new List<Obstacle>();
+            Random rnd = new Random(123);
+            int obsCount = rnd.Next(1, 11);
+            for (int i = 0; i < obsCount; i++)
+            {
+                Obstacle obstacle = new Obstacle(rnd.Next(5, 685), rnd.Next(5, 685), "Red");
+                matchObstacles.Add(obstacle);   
+
+            }
+            return matchObstacles;
+        }
+        public static List<Trap> createTraps()
+        {
+            List<Trap> matchTraps = new List<Trap>(); 
+            Random rnd = new Random(552);
+            int trapCount = rnd.Next(5, 16);
+            for (int i = 0; i < trapCount; i++)
+            {
+                Trap trap = new Trap(rnd.Next(5, 695), rnd.Next(5, 695), "Blue");
+                matchTraps.Add(trap);   
+            }
+            return matchTraps;
+        }
+
+        //public static List<MapObject> combine(int matchId)
+        //{
+        //    List<MapObject> matchMapObjects = new List<MapObject>();
+        //    matchMapObjects.AddRange(traps[matchId]);
+        //    matchMapObjects.AddRange(obstacles[matchId]);
+        //    return matchMapObjects;
+        //}
+
 
     }
     public class Echo : WebSocketBehavior
@@ -95,14 +133,82 @@ namespace Predictor_SERVER
         //List<Class> classes = new List<Class>();
         //Class c1 = new Class(15, 10, 5, 1, 343, 10);//pradines coord pakeist nes paskui kai su walls buna keistai gal i speed?
         //Class c2 = new Class(15, 10, 5, 1, 343, 685);
+        //public bool collision(int xCoord, int yCoord, List<Obstacle> obstacles)
+        //{
+        //    foreach (var obs in obstacles)
+        //    {
+        //        if (xCoord > obs.coordinates.Item1 && xCoord < obs.coordinates.Item1 + obs.size && yCoord > obs.coordinates.Item2 && yCoord < obs.coordinates.Item2 + obs.size)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
 
+        //public bool collision(int xCoord, int yCoord,int size, List<Obstacle> obstacles)
+        //{
+        //    RectangleF cRegion = new Rectangle(xCoord, yCoord, size, size);
 
+        //    foreach (var obs in obstacles)
+        //    {
+        //        RectangleF obsRegion = new Rectangle(obs.coordinates.Item1, obs.coordinates.Item2, obs.size, obs.size);
+        //        RectangleF intersectRectangleF = RectangleF.Intersect(cRegion, obsRegion);
+        //        if(intersectRectangleF.Height != 0 || intersectRectangleF.Width != 0)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+        //public int collisionObstacle(int xCoord, int yCoord, int size, List<Obstacle> obstacles)
+        //{
+        //    RectangleF cRegion = new Rectangle(xCoord, yCoord, size, size);
+
+        //    foreach (var obs in obstacles)
+        //    {
+        //        RectangleF obsRegion = new Rectangle(obs.coordinates.Item1, obs.coordinates.Item2, obs.size, obs.size);
+        //        RectangleF intersectRectangleF = RectangleF.Intersect(cRegion, obsRegion);
+
+        //        if (intersectRectangleF.Height != 0 || intersectRectangleF.Width != 0)
+        //        {
+        //            if (intersectRectangleF.Height > intersectRectangleF.Width)
+        //            {
+        //                return 1;
+        //            }
+        //            else if (intersectRectangleF.Width > intersectRectangleF.Height)
+        //            {
+        //                return 2;
+        //            }
+        //            else return 3;
+        //        }
+        //    }
+        //    return 0;
+        //}
+
+        //public void collisionTrap(int xCoord, int yCoord, int size, List<Trap> trap, int matchId)
+        //{
+        //    RectangleF cRegion = new Rectangle(xCoord, yCoord, size, size);
+
+        //    for (int i = 0; i < trap.Count; i++)
+
+        //    {
+        //        RectangleF trpRegion = new Rectangle(trap[i].coordinates.Item1, trap[i].coordinates.Item2, trap[i].size, trap[i].size);
+        //        RectangleF intersectRectangleF = RectangleF.Intersect(cRegion, trpRegion);
+
+        //        if (intersectRectangleF.Height != 0 || intersectRectangleF.Width != 0)
+        //        {
+        //            Variables.traps[matchId].RemoveAt(i);// add line to explode/deal damage;
+        //            //c.takeDamage(trap[i].damage);
+        //        }
+        //    }
+        //}
         public Echo()
         {
 
         }
         protected override void OnMessage(MessageEventArgs e)
         {
+                
             if (e.Data.Length > 3)
             {
                 int which = -1;
@@ -138,6 +244,18 @@ namespace Predictor_SERVER
                     Variables.matchIds[matchId].Add(ID);//
                     Variables.matches.Add(new Server.Match(matchId, text));
                     Variables.classes.Add(new List<Class>());
+                    Variables.traps.Add(new List<Trap>());
+                    Variables.obstacles.Add(new List<Obstacle>());
+                    Variables.traps[matchId] = (Variables.createTraps());
+                    Variables.obstacles[matchId] = (Variables.createObstacles());
+                    //List<MapObject> temp = new List<MapObject>();
+                    //temp.AddRange(Variables.traps[matchId]);
+                    //temp.AddRange(Variables.obstacles[matchId]);
+
+                    //Variables.mapObjects[matchId] = (Variables.combine(matchId));
+
+
+
                     Variables.pickables.Add(new List<PickUp>() { new DamagePotion((350,350))});
                     Variables.projectiles.Add(new List<Projectile>());
                     var message = JsonConvert.SerializeObject((matchId, Variables.matches[matchId].peopleAmount-1));
@@ -172,9 +290,12 @@ namespace Predictor_SERVER
 
 
                     var c = Variables.classes[matchId][which];//sita reik susirast kuris siunte ir galbut iskart dirbt su listu
+
+                    var obstacles = Variables.obstacles[matchId];
                     int pad = 5;
                     foreach (var keyData in keys)
                     {
+                        var tempC = c.coordinates;
                         if (keyData == Keys.Left)
                         {
                             if (c.coordinates.Item1 > c.speed)
@@ -188,7 +309,7 @@ namespace Predictor_SERVER
                         }
                         else if (keyData == Keys.Right)
                         {
-                            if (c.coordinates.Item1 + c.speed + c.size < map.size)
+                            if(c.coordinates.Item1 + c.speed + c.size < map.size)
                             {
                                 c.coordinates.Item1 += c.speed;
                             }
@@ -199,7 +320,7 @@ namespace Predictor_SERVER
                         }
                         if (keyData == Keys.Up)
                         {
-                            if (c.coordinates.Item2 > c.speed)
+                            if(c.coordinates.Item2 > c.speed)
                             {
                                 c.coordinates.Item2 -= c.speed;
                             }
@@ -211,7 +332,7 @@ namespace Predictor_SERVER
                         }
                         else if (keyData == Keys.Down)
                         {
-                            if (c.coordinates.Item2 + c.speed + c.size < map.size)
+                            if(c.coordinates.Item2 + c.speed + c.size < map.size)
                             {
                                 c.coordinates.Item2 += c.speed;
                             }
@@ -220,6 +341,31 @@ namespace Predictor_SERVER
                                 c.coordinates.Item2 = map.size - c.size + 5;
                             }
                         }
+                        foreach (var obs in obstacles)
+                        {
+                            var k = obs.collision(tempC, c.coordinates, c.size);
+                            var diff = (tempC.Item1 - c.coordinates.Item1, tempC.Item2 - c.coordinates.Item2) ;
+                            if (k != (-1, -1))
+                            {
+                                if (diff.Item1 == 0)
+                                {
+                                    c.coordinates.Item2 = k.Item2;
+                                }
+                                else
+                                {
+                                    c.coordinates.Item1 = k.Item1;
+                                } 
+                            }
+                        }
+                        for (int i = 0; i < Variables.traps[matchId].Count; i++)
+                        {
+                            if (Variables.traps[matchId][i].collision(tempC, c.coordinates, c.size))
+                            {
+                                Variables.traps[matchId].RemoveAt(i);
+                            }
+                        } 
+
+
                         if (keyData == Keys.LButton)
                         {
                             if (DateTime.Now.Ticks / 10000 - c.lastAttack.Ticks / 10000 > c.weapon.attackSpeed)

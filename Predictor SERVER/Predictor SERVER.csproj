@@ -77,12 +77,15 @@
     <Compile Include="Map\PickUpCreator.cs" />
     <Compile Include="Map\PowerUp.cs" />
     <Compile Include="Character\WeaponAlgorithm.cs" />
+    <Compile Include="Map\Builder.cs" />
     <Compile Include="Map\Map.cs" />
     <Compile Include="Map\MapObject.cs" />
     <Compile Include="Map\Obstacle.cs" />
     <Compile Include="Map\SpeedCreator.cs" />
     <Compile Include="Map\SpeedPotion.cs" />
     <Compile Include="Map\SpeedPowerUp.cs" />
+    <Compile Include="Map\Trap.cs" />
+    <Compile Include="Map\TrapBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\Match.cs" />

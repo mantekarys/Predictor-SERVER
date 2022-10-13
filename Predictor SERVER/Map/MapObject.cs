@@ -10,5 +10,6 @@ namespace Predictor_SERVER.Map
     {
         public int size;
         public (int, int) coordinates;
+        public string color;
     }
 }
