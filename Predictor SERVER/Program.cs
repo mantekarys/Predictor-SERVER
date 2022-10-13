@@ -22,6 +22,7 @@ using System.Reflection;
 
 namespace Predictor_SERVER
 {
+
     public static class Variables
     {
         public static List<List<Class>> classes = new List<List<Class>>(); //{ new Class(15, 10, 5, 1, 343, 10), new Class(15, 10, 5, 1, 343, 685) };
@@ -41,7 +42,7 @@ namespace Predictor_SERVER
             Variables.started = true;
             Timer newTimer = new Timer();
             newTimer.Elapsed += delegate { Broadcast(matchId); };//new ElapsedEventHandler(Broadcast,5);
-            newTimer.Interval = 100;
+            newTimer.Interval = 10;
             newTimer.Start();
         }
         public static void Broadcast(int matchId)//object sender, EventArgs e

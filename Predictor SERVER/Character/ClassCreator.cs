@@ -25,6 +25,16 @@ namespace Predictor_SERVER.Character
                 x = 343;
                 y = 685;
             }
+            if (which == 3)
+            {
+                x = 10;
+                y = 343;
+            }
+            else if (which == 4)
+            {
+                x = 685;
+                y = 343;
+            }
             if (creator == "Rogue")
             {
                 return new RogueCreator().CreateClass(size, x, y);
