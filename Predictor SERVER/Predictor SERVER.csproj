@@ -59,9 +59,12 @@
     <Compile Include="Character\RogueCreator.cs" />
     <Compile Include="Character\Tank.cs" />
     <Compile Include="Character\TankCreator.cs" />
+    <Compile Include="Map\Builder.cs" />
     <Compile Include="Map\Map.cs" />
     <Compile Include="Map\MapObject.cs" />
     <Compile Include="Map\Obstacle.cs" />
+    <Compile Include="Map\Trap.cs" />
+    <Compile Include="Map\TrapBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\Match.cs" />

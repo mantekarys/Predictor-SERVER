@@ -28,6 +28,8 @@ namespace Predictor_SERVER
         //public static Class c1 = new Class(15, 10, 5, 1, 343, 10);//pradines coord pakeist nes paskui kai su walls buna keistai gal i speed?
         //public static Class c2 = new Class(15, 10, 5, 1, 343, 685);//kaska su tom class daryt
         public static List<MapObject> mapO = new List<MapObject>();
+        public static List<List<Trap>> traps = new List<List<Trap>>();
+        public static List<List<Obstacle>> obstacles = new List<List<Obstacle>>();
         public static Map.Map map = new Map.Map("Map1", mapO);
         public static int howMany = 0;
         public static WebSocketSessionManager sesions;
@@ -46,13 +48,40 @@ namespace Predictor_SERVER
         }
         public static void Broadcast(int matchId)//object sender, EventArgs e
         {
-            var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map));
+            var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map, Variables.traps[matchId].ToList(), Variables.obstacles[matchId].ToList()));
             foreach (var item in Variables.matchIds[matchId])
             {
                 sesions.SendTo(message, item);
             }
             //sesions.Broadcast(message);
         }
+
+        public static List<Obstacle> createObstacles()
+        {
+            List<Obstacle> matchObstacles = new List<Obstacle>();
+            Random rnd = new Random();
+            int obsCount = rnd.Next(1, 11);
+            for (int i = 0; i < obsCount; i++)
+            {
+                Obstacle obstacle = new Obstacle(rnd.Next(5, 685), rnd.Next(5, 685), "Red");
+                matchObstacles.Add(obstacle);   
+
+            }
+            return matchObstacles;
+        }
+        public static List<Trap> createTraps()
+        {
+            List<Trap> matchTraps = new List<Trap>(); 
+            Random rnd = new Random();
+            int trapCount = rnd.Next(5, 16);
+            for (int i = 0; i < trapCount; i++)
+            {
+                Trap trap = new Trap(rnd.Next(5, 695), rnd.Next(5, 695), "Blue");
+                matchTraps.Add(trap);   
+            }
+            return matchTraps;
+        }
+
 
     }
     public class Echo : WebSocketBehavior
@@ -62,13 +91,13 @@ namespace Predictor_SERVER
         //Class c1 = new Class(15, 10, 5, 1, 343, 10);//pradines coord pakeist nes paskui kai su walls buna keistai gal i speed?
         //Class c2 = new Class(15, 10, 5, 1, 343, 685);
 
-
         public Echo()
         {
 
         }
         protected override void OnMessage(MessageEventArgs e)
         {
+                
             if (e.Data.Length > 3)
             {
                 int which = -1;
@@ -104,6 +133,13 @@ namespace Predictor_SERVER
                     Variables.matchIds[matchId].Add(ID);//
                     Variables.matches.Add(new Server.Match(matchId, text));
                     Variables.classes.Add(new List<Class>());
+                    Variables.traps.Add(new List<Trap>());
+                    Variables.obstacles.Add(new List<Obstacle>());
+                    Variables.traps[matchId] = (Variables.createTraps());
+                    Variables.obstacles[matchId] = (Variables.createObstacles());
+
+
+
                     var message = JsonConvert.SerializeObject((matchId, Variables.matches[matchId].peopleAmount-1));
                     Send(message);
                 }
