@@ -86,9 +86,11 @@
     <Compile Include="Map\SpeedPowerUp.cs" />
     <Compile Include="Map\Trap.cs" />
     <Compile Include="Map\TrapBuilder.cs" />
+    <Compile Include="Server\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\Match.cs" />
+    <Compile Include="Server\Subject.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -13,12 +13,14 @@ namespace Predictor_SERVER.Server
         public string name;
         public int peopleAmount = 1;
         public int ready = 0;
+        public List<Player> players;
 
 
         public Match(int id, string name)
         {
             this.name = name;
             this.id = id;
+            this.players = new List<Player>();
         }
 
         public void start()
