@@ -12,7 +12,9 @@ namespace Predictor_SERVER.Server
         public string userName;
         public int score = 0;
         public Class playerClass;
-
+        public Player()
+        {
+        }
         public Player(Class c, string userName = "Bill")
         {
             playerClass = c;

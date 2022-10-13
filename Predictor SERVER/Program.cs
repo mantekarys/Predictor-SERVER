@@ -15,7 +15,6 @@ namespace Predictor_SERVER
 {
     public static class Variables
     {
-        public static List<List<Class>> classes = new List<List<Class>>(); //{ new Class(15, 10, 5, 1, 343, 10), new Class(15, 10, 5, 1, 343, 685) };
         public static List<MapObject> mapO = new List<MapObject>();
         public static List<List<Trap>> traps = new List<List<Trap>>();
         public static List<List<Obstacle>> obstacles = new List<List<Obstacle>>();
@@ -55,7 +54,7 @@ namespace Predictor_SERVER
                 }
 
             }
-            var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map, Variables.pickables[matchId].ToList(), Variables.projectiles[matchId].ToList(), Variables.traps[matchId].ToList(), Variables.obstacles[matchId].ToList()));
+            var message = JsonConvert.SerializeObject((Variables.matches[matchId].players.ToList(), Variables.map, Variables.pickables[matchId].ToList(), Variables.projectiles[matchId].ToList(), Variables.traps[matchId].ToList(), Variables.obstacles[matchId].ToList()));
             foreach (var item in Variables.matchIds[matchId])
             {
                 sesions.SendTo(message, item);
@@ -119,10 +118,9 @@ namespace Predictor_SERVER
                 if (code == 752)//creates match
                 {
                     matchId = Variables.matches.Count;
-                    Variables.matchIds.Add(new List<string>());//
-                    Variables.matchIds[matchId].Add(ID);//
+                    Variables.matchIds.Add(new List<string>());
+                    Variables.matchIds[matchId].Add(ID);
                     Variables.matches.Add(new Server.Match(matchId, text));
-                    Variables.classes.Add(new List<Class>());
                     Variables.traps.Add(new List<Trap>());
                     Variables.obstacles.Add(new List<Obstacle>());
                     Variables.traps[matchId] = Variables.createTraps();
@@ -142,7 +140,7 @@ namespace Predictor_SERVER
                 if (code == 545)//readies up
                 {
                     Variables.matches[matchId].ready += ready;
-                    Variables.classes[matchId].Add(ClassCreator.pickCreator(text, 15, which));
+                    Variables.matches[matchId].players.Add(new Server.Player(ClassCreator.pickCreator(text, 15, which)));
                     if (Variables.matches[matchId].ready == Variables.matches[matchId].peopleAmount)
                     {
                         var thread = new Thread(
@@ -154,7 +152,7 @@ namespace Predictor_SERVER
                 }
                 if (code == -1)////game movement
                 {
-                    var c = Variables.classes[matchId][which];
+                    var c = Variables.matches[matchId].players[which].playerClass;
                     var obstacles = Variables.obstacles[matchId];
                     int pad = 5;
                     foreach (var keyData in keys)
@@ -263,24 +261,11 @@ namespace Predictor_SERVER
                             }
                         }
                     }
-                    Variables.classes[matchId][which] = c;
+                    Variables.matches[matchId].players[which].playerClass = c;
                 }
             }
             if (e.Data == "159")//map start
             {
-                Variables.classes.Add(new List<Class>() { new Class(15, 10, 5, 1, 343, 10), new Class(15, 10, 5, 1, 343, 685) });
-                var message = JsonConvert.SerializeObject((Variables.classes[0], Variables.map, Variables.howMany++));
-                if (Variables.howMany > 2)
-                {
-                    Variables.howMany = 0;
-                }
-                if (!Variables.started)
-                {
-                    var thread = new Thread(
-                         () => Variables.SendMessages(0));
-                    thread.Start();
-                    Variables.sesions = Sessions;
-                }
             }
             if (e.Data == "999")//match list
             {
