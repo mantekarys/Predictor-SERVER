@@ -33,7 +33,7 @@ namespace Predictor_SERVER
         public static int howMany = 0;
         public static WebSocketSessionManager sesions;
         public static bool started = false;
-
+        public static List<List<PickUp>> pickables = new List<List<PickUp>>();
         public static List<Server.Match> matches = new List<Server.Match>();
         public static List<List<string>> matchIds = new List<List<string>>();
 
@@ -47,7 +47,8 @@ namespace Predictor_SERVER
         }
         public static void Broadcast(int matchId)//object sender, EventArgs e
         {
-            var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map));
+
+            var message = JsonConvert.SerializeObject((Variables.classes[matchId].ToList(), Variables.map,Variables.pickables[matchId].ToList()));
             foreach (var item in Variables.matchIds[matchId])
             {
                 sesions.SendTo(message, item);
@@ -105,6 +106,7 @@ namespace Predictor_SERVER
                     Variables.matchIds[matchId].Add(ID);//
                     Variables.matches.Add(new Server.Match(matchId, text));
                     Variables.classes.Add(new List<Class>());
+                    Variables.pickables.Add(new List<PickUp>() { new DamagePotion((350,350))});
                     var message = JsonConvert.SerializeObject((matchId, Variables.matches[matchId].peopleAmount-1));
                     Send(message);
                 }
@@ -300,6 +302,7 @@ namespace Predictor_SERVER
 
     class Program
     {
+
         static void Main(string[] args)
         {
             List<Class> classes = new List<Class>();
@@ -308,7 +311,6 @@ namespace Predictor_SERVER
             classes.Add(c1);
             classes.Add(c2);
             var message = JsonConvert.SerializeObject((classes, 0));
-
 
             WebSocketServer wssv = new WebSocketServer("ws://127.0.0.1:7890");
    
