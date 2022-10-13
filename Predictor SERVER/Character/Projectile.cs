@@ -40,5 +40,7 @@ namespace Predictor_SERVER.Character
             }
             return coordinates;
         }
+
+        
     }
 }

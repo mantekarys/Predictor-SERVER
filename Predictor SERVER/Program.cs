@@ -19,6 +19,7 @@ using Predictor_SERVER.Server;
 using System.Text.RegularExpressions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using System.Reflection;
+using System.Drawing;
 
 namespace Predictor_SERVER
 {
@@ -48,9 +49,12 @@ namespace Predictor_SERVER
         {
             foreach (var projectile in projectiles[matchId].ToList())
             {
+                if (projectile == null) continue;
+                RectangleF r = new Rectangle();
                 var last = projectile.coordinates;
                 var current = projectile.move();
                 var dif = (last.Item1 - current.Item1, last.Item2 - current.Item2);
+
                 //foreach (var obj in classes[matchId])
                 //{
                 //    var dist = (last.Item1 - obj.coordinates.Item1, last.Item2 - obj.coordinates.Item2);
@@ -62,7 +66,15 @@ namespace Predictor_SERVER
 
                 if (current.Item1 > 700 || current.Item2 > 700 || current.Item1 < 5 || current.Item2 < 5)
                 {
-                    projectiles[matchId].Remove(projectile);
+                    try
+                    {
+                        projectiles[matchId].Remove(projectile);
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    
                 }
 
             }
