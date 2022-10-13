@@ -15,6 +15,7 @@ namespace Predictor_SERVER.Character
             this.health = 5;
             this.size = size;
             this.coordinates = (x, y);
+            this.weapon = new GunWeapon("gun", 200);
         }
     }
 }

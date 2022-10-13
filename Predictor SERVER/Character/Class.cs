@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using WebSocketSharp;
 using Newtonsoft.Json;
+using System.Globalization;
 using Predictor_SERVER.Map;
 
 namespace Predictor_SERVER.Character
@@ -14,6 +15,8 @@ namespace Predictor_SERVER.Character
     {
         private List<Item> inventory = new List<Item>();
         private Dictionary<string, int> upgrades = new Dictionary<string, int>();
+        public WeaponAlgorithm weapon;
+        public DateTime lastAttack; 
         class Message
         {
             List<string> buttons;
@@ -25,7 +28,7 @@ namespace Predictor_SERVER.Character
             this.health = health;
             this.damage = damage;
             this.coordinates = (x, y);
-
+            lastAttack = DateTime.MinValue;
             //send other parameters on start or when took an upgrade
         }
         public Class() { }
@@ -69,6 +72,17 @@ namespace Predictor_SERVER.Character
                 //var mes = JsonConvert.SerializeObject<Message>(e.Data);
                 //ws.Send(mes);
             }
+        }
+
+        public void setWeaponAlgorithm(WeaponAlgorithm weapon)
+        {
+            this.weapon = weapon;
+        }
+
+        public Projectile attack(int direction)
+        {
+            lastAttack = DateTime.Now;
+            return weapon.attack(this, direction);
         }
     }
 }

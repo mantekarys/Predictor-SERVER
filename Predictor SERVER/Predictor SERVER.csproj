@@ -38,6 +38,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -53,8 +54,13 @@
     <Compile Include="Character\Character.cs" />
     <Compile Include="Character\Class.cs" />
     <Compile Include="Character\ClassCreator.cs" />
+    <Compile Include="Character\ExplosiveWeapon.cs" />
     <Compile Include="Character\Gunner.cs" />
     <Compile Include="Character\GunnerCreator.cs" />
+    <Compile Include="Character\GunWeapon.cs" />
+    <Compile Include="Character\LaserWeaponcs.cs" />
+    <Compile Include="Character\MeleeWeapon.cs" />
+    <Compile Include="Character\Projectile.cs" />
     <Compile Include="Character\Npc.cs" />
     <Compile Include="Character\Rogue.cs" />
     <Compile Include="Character\RogueCreator.cs" />
@@ -70,6 +76,7 @@
     <Compile Include="Map\PickUp.cs" />
     <Compile Include="Map\PickUpCreator.cs" />
     <Compile Include="Map\PowerUp.cs" />
+    <Compile Include="Character\WeaponAlgorithm.cs" />
     <Compile Include="Map\Map.cs" />
     <Compile Include="Map\MapObject.cs" />
     <Compile Include="Map\Obstacle.cs" />
