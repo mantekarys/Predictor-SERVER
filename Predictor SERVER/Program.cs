@@ -125,7 +125,7 @@ namespace Predictor_SERVER
                     Variables.obstacles.Add(new List<Obstacle>());
                     Variables.traps[matchId] = Variables.createTraps();
                     Variables.obstacles[matchId] = Variables.createObstacles();
-                    Variables.pickables.Add(new List<PickUp>() { new DamagePotion((350, 350)) });
+                    Variables.pickables.Add(new List<PickUp>() { new DamagePowerUp((350, 350)) });
                     Variables.projectiles.Add(new List<Projectile>());
                     var message = JsonConvert.SerializeObject((matchId, Variables.matches[matchId].peopleAmount - 1));
                     Send(message);
@@ -154,9 +154,11 @@ namespace Predictor_SERVER
                 {
                     var c = Variables.matches[matchId].players[which].playerClass;
                     var obstacles = Variables.obstacles[matchId];
+                    var pickups = Variables.pickables[matchId];
                     int pad = 5;
                     foreach (var keyData in keys)
                     {
+                        #region next position clac
                         var tempC = c.coordinates;
                         if (keyData == Keys.Left)
                         {
@@ -203,6 +205,8 @@ namespace Predictor_SERVER
                                 c.coordinates.Item2 = map.size - c.size + 5;
                             }
                         }
+                        #endregion End next Position clac
+                        #region collision calc
                         foreach (var obs in obstacles)
                         {
                             var k = obs.collision(tempC, c.coordinates, c.size);
@@ -227,7 +231,29 @@ namespace Predictor_SERVER
                             }
                         }
 
-
+                        for(int i =0; i< Variables.pickables[matchId].Count;i++)// checks whether a pickup has been touched and adds it to respected player
+                        {
+                            
+                            if(Variables.pickables[matchId][i] is Item)
+                            {
+                                var tempPickup = Variables.pickables[matchId][i] as Item;
+                                if (tempPickup.collision(tempC, c.coordinates, c.size) && c.inventoryCheck()<=3)
+                                {
+                                    c.AddToInventory(tempPickup);
+                                    Variables.pickables[matchId].Remove(Variables.pickables[matchId][i]);
+                                }
+                            }
+                            else if(Variables.pickables[matchId][i] is PowerUp)
+                            {
+                                var tempPickup = Variables.pickables[matchId][i] as PowerUp;
+                                if (tempPickup.collision(tempC, c.coordinates, c.size))
+                                {
+                                    c.ApplyPowerUp(tempPickup);
+                                    Variables.pickables[matchId].Remove(Variables.pickables[matchId][i]);
+                                }
+                            } 
+                        }
+                        #endregion collision calc
                         if (keyData == Keys.LButton)
                         {
                             if (DateTime.Now.Ticks / 10000 - c.lastAttack.Ticks / 10000 > c.weapon.attackSpeed)

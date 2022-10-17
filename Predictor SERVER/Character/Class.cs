@@ -38,9 +38,9 @@ namespace Predictor_SERVER.Character
         /// <param name="powerUp">Provided will be children of PowerUP class</param>
         public void ApplyPowerUp(PowerUp powerUp)
         {
-            int value = this.upgrades[powerUp.GetType().ToString()];
             if(this.upgrades.ContainsKey(powerUp.GetType().ToString()))
             {
+                int value = this.upgrades[powerUp.GetType().ToString()];
                 value = this.upgrades[powerUp.GetType().ToString()] +1;
                 this.upgrades[powerUp.GetType().ToString()]=value;
             }
@@ -57,9 +57,20 @@ namespace Predictor_SERVER.Character
         {
             this.inventory.Add(item);
         }
-        public void UseItem()
+        /// <summary>
+        /// Method for apllying item for temporarly stat boost
+        /// </summary>
+        public void UseItem(int position)
         {
 
+        }
+        /// <summary>
+        /// Method to get the amount of intems held in inventory
+        /// </summary>
+        /// <returns></returns>
+        public int inventoryCheck()
+        {
+            return this.inventory.Count();
         }
 
         public override void move()//event
