@@ -318,13 +318,7 @@ namespace Predictor_SERVER
         private void NpcMovement(int matchId)
         {
             foreach (var npc in Variables.npcs[matchId])
-            {
-                //if (projectile == null) continue;
-                //RectangleF r = new Rectangle();
-                //var last = projectile.coordinates;
-                //var current = projectile.move();
-                //var dif = (last.Item1 - current.Item1, last.Item2 - current.Item2);
-                
+            {           
                 int dir = rnd.Next(0, 5);
                 int pad = 5;
                 int mSize = 700;
@@ -421,7 +415,6 @@ namespace Predictor_SERVER
                 RectangleF r = new Rectangle();
                 var last = projectile.coordinates;
                 var current = projectile.move();
-                //var dif = (last.Item1 - current.Item1, last.Item2 - current.Item2);
                 if (current.Item1 > 700 || current.Item2 > 700 || current.Item1 < 5 || current.Item2 < 5)
                 {
                     try
@@ -430,40 +423,35 @@ namespace Predictor_SERVER
                     }
                     catch (Exception) { }
                 }
-                var toRemovePlayer = new List<Player>();
+                //var toRemovePlayer = new List<Player>();
 
                 foreach (var player in Variables.matches[matchId].players)
                 {
                     if (player.playerClass == projectile.attacker) continue;
                     var k = player.playerClass.collision(last, projectile.coordinates, projectile.size);
-                    //var diff = (last.Item1 - projectile.coordinates.Item1, last.Item2 - projectile.coordinates.Item2);
                     if (k != (-1, -1))
                     {
                         try
                         {
-                            if (player.playerClass.takeDamage(projectile.attacker.damage))
-                            {
-                                toRemovePlayer.Add(player);
-                            }
+                            player.playerClass.takeDamage(projectile.attacker.damage);
+                            //if (player.playerClass.takeDamage(projectile.attacker.damage))
+                            //{
+                            //    toRemovePlayer.Add(player);
+                            //}
                             player.playerClass.takeDamage(projectile.attacker.damage);
                             Variables.projectiles[matchId].Remove(projectile);
                         }
                         catch (Exception) { }
                     }
                 }
-                foreach (var player in toRemovePlayer)
-                {
-                    Variables.matches[matchId].players.Remove(player);
-                }
+                //foreach (var player in toRemovePlayer)
+                //{
+                //    Variables.matches[matchId].players.Remove(player);
+                //}
                 var toRemoveNpc = new List<Npc>();
                 foreach (var npc in Variables.npcs[matchId])
                 {
                     var k = npc.collision(last, projectile.coordinates, projectile.size);
-                    //var diff = (last.Item1 - c.coordinates.Item1, last.Item2 - c.coordinates.Item2);
-
-
-                    //var k = player.playerClass.collision(prev, npc.coordinates, npc.size);
-                    //var diff = (prev.Item1 - npc.coordinates.Item1, prev.Item2 - npc.coordinates.Item2);
                     if (k != (-1, -1))
                     {
                         try
@@ -479,7 +467,19 @@ namespace Predictor_SERVER
                 }
                 foreach (var npc in toRemoveNpc)
                 {
-                    //Variables.npcs[matchId].Remove(npc);
+                    Variables.npcs[matchId].Remove(npc);
+                }
+                foreach (var obs in Variables.obstacles[matchId])
+                {
+                    var k = obs.collision(last, projectile.coordinates, projectile.size);
+                    if (k != (-1, -1))
+                    {
+                        try
+                        {
+                            Variables.projectiles[matchId].Remove(projectile);
+                        }
+                        catch (Exception) { }
+                    }
                 }
             }
         }
