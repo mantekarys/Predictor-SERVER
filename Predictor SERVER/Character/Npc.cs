@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Predictor_SERVER.Map;
 
 namespace Predictor_SERVER.Character
 {
-    internal class Npc : Character
+    public class Npc : Character
     {
-        public Npc()
+        public Npc(int size, int speed, int health, int damage, int x, int y)
         {
+            this.size = size;
+            this.speed = speed;
+            this.health = health;
+            this.damage = damage;
+            this.coordinates.Item1 = x;
+            this.coordinates.Item2 = y;
         }
 
         public override void move()
@@ -35,5 +42,6 @@ namespace Predictor_SERVER.Character
             }
             return drop;
         }
+
     }
 }

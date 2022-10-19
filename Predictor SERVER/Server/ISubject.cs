@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebSocketSharp;
 
 namespace Predictor_SERVER.Server
 {
-    public abstract class Subject
+    public interface ISubject
     {
-        public abstract void Broadcast();
-        public abstract void OnMessage();
+        void Broadcast(int matchId);
+        //void OnMessage(MessageEventArgs e);
     }
 }

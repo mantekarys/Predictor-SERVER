@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
 using Predictor_SERVER.Character;
 using Predictor_SERVER.Map;
+using Predictor_SERVER.Server;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
 using WebSocketSharp;
@@ -27,45 +29,15 @@ namespace Predictor_SERVER
         public static List<Server.Match> matches = new List<Server.Match>();
         public static List<List<string>> matchIds = new List<List<string>>();
 
-        public static void SendMessages(int matchId)
-        {
-            Variables.started = true;
-            Timer newTimer = new Timer();
-            newTimer.Elapsed += delegate { Broadcast(matchId); };
-            newTimer.Interval = 20;
-            newTimer.Start();
-        }
-        public static void Broadcast(int matchId)
-        {
-            foreach (var projectile in projectiles[matchId].ToList())
-            {
-                if (projectile == null) continue;
-                RectangleF r = new Rectangle();
-                var last = projectile.coordinates;
-                var current = projectile.move();
-                var dif = (last.Item1 - current.Item1, last.Item2 - current.Item2);
-                if (current.Item1 > 700 || current.Item2 > 700 || current.Item1 < 5 || current.Item2 < 5)
-                {
-                    try
-                    {
-                        projectiles[matchId].Remove(projectile);
-                    }
-                    catch (Exception) { }
-                }
 
-            }
-            var message = JsonConvert.SerializeObject((Variables.matches[matchId].players.ToList(), Variables.map, Variables.pickables[matchId].ToList(), Variables.projectiles[matchId].ToList(), Variables.traps[matchId].ToList(), Variables.obstacles[matchId].ToList()));
-            foreach (var item in Variables.matchIds[matchId])
-            {
-                sesions.SendTo(message, item);
-            }
-        }
+        public static List<int> moveNpc = new List<int>();
+        public static List<List<Npc>> npcs = new List<List<Npc>>();
 
         public static List<Obstacle> createObstacles()
         {
             List<Obstacle> matchObstacles = new List<Obstacle>();
-            Random rnd = new Random(123);
-            int obsCount = rnd.Next(1, 11);
+            Random rnd = new Random(645);
+            int obsCount = rnd.Next(1, 20);
             for (int i = 0; i < obsCount; i++)
             {
                 Obstacle obstacle = new Obstacle(rnd.Next(5, 685), rnd.Next(5, 685), "Red");
@@ -76,7 +48,7 @@ namespace Predictor_SERVER
         public static List<Trap> createTraps()
         {
             List<Trap> matchTraps = new List<Trap>();
-            Random rnd = new Random(552);
+            Random rnd = new Random(978);
             int trapCount = rnd.Next(5, 16);
             for (int i = 0; i < trapCount; i++)
             {
@@ -86,8 +58,9 @@ namespace Predictor_SERVER
             return matchTraps;
         }
     }
-    public class Echo : WebSocketBehavior
+    public class Echo : WebSocketBehavior, ISubject
     {
+        Random rnd = new Random(978);
         protected override void OnMessage(MessageEventArgs e)
         {
             if (e.Data.Length > 3)
@@ -127,6 +100,9 @@ namespace Predictor_SERVER
                     Variables.obstacles[matchId] = Variables.createObstacles();
                     Variables.pickables.Add(new List<PickUp>() { new DamagePotion((350, 350)) });
                     Variables.projectiles.Add(new List<Projectile>());
+
+                    Variables.npcs.Add(new List<Npc>() { new Npc(15, 5, 5, 1, 30, 30), new Npc(15, 5, 5, 1, 655, 30), new Npc(15, 5, 5, 1, 30, 655), new Npc(15, 5, 5, 1, 655, 655) });
+                    Variables.moveNpc.Add(0);
                     var message = JsonConvert.SerializeObject((matchId, Variables.matches[matchId].peopleAmount - 1));
                     Send(message);
                 }
@@ -144,7 +120,7 @@ namespace Predictor_SERVER
                     if (Variables.matches[matchId].ready == Variables.matches[matchId].peopleAmount)
                     {
                         var thread = new Thread(
-                                () => Variables.SendMessages(matchId));
+                                () => SendMessages(matchId));
                         thread.Start();
                         Variables.sesions = Sessions;
                     }
@@ -160,7 +136,7 @@ namespace Predictor_SERVER
                         var tempC = c.coordinates;
                         if (keyData == Keys.Left)
                         {
-                            if (c.coordinates.Item1 > c.speed)
+                            if (c.coordinates.Item1 > c.speed + pad)
                             {
                                 c.coordinates.Item1 -= c.speed;
                             }
@@ -182,7 +158,7 @@ namespace Predictor_SERVER
                         }
                         if (keyData == Keys.Up)
                         {
-                            if (c.coordinates.Item2 > c.speed)
+                            if (c.coordinates.Item2 > c.speed + pad)
                             {
                                 c.coordinates.Item2 -= c.speed;
                             }
@@ -219,14 +195,50 @@ namespace Predictor_SERVER
                                 }
                             }
                         }
+                        foreach (var npc in Variables.npcs[matchId])
+                        {
+                            var k = npc.collision(tempC, c.coordinates, c.size);
+                            var diff = (tempC.Item1 - c.coordinates.Item1, tempC.Item2 - c.coordinates.Item2);
+                            if (k != (-1, -1))
+                            {
+                                if (diff.Item1 == 0)
+                                {
+                                    c.coordinates.Item2 = k.Item2;
+                                }
+                                else
+                                {
+                                    c.coordinates.Item1 = k.Item1;
+                                }
+                                c.takeDamage(npc.damage);
+                            }
+                        }
+
                         for (int i = 0; i < Variables.traps[matchId].Count; i++)
                         {
                             if (Variables.traps[matchId][i].collision(tempC, c.coordinates, c.size))
                             {
+                                c.takeDamage(Variables.traps[matchId][i].damage);
                                 Variables.traps[matchId].RemoveAt(i);
                             }
                         }
-
+                        int num = 0;
+                        foreach (var player in Variables.matches[matchId].players)
+                        {
+                            if (num++ == which) continue;
+                            var k = player.playerClass.collision(tempC, c.coordinates, c.size);
+                            var diff = (tempC.Item1 - c.coordinates.Item1, tempC.Item2 - c.coordinates.Item2);
+                            if (k != (-1, -1))
+                            {
+                                if (diff.Item1 == 0)
+                                {
+                                    c.coordinates.Item2 = k.Item2;
+                                }
+                                else
+                                {
+                                    c.coordinates.Item1 = k.Item1;
+                                }
+                            }
+                        }
 
                         if (keyData == Keys.LButton)
                         {
@@ -276,6 +288,199 @@ namespace Predictor_SERVER
                 }
                 var message = JsonConvert.SerializeObject(matchIds);
                 Send(message);
+            }
+        }
+
+        public void SendMessages(int matchId)
+        {
+            Variables.started = true;
+            Timer newTimer = new Timer();
+            newTimer.Elapsed += delegate { Broadcast(matchId); };
+            newTimer.Interval = 20;
+            newTimer.Start();
+        }
+        public void Broadcast(int matchId)
+        {
+            BulletMovement(matchId);
+            if (Variables.moveNpc[matchId]++ == 4)
+            {
+                NpcMovement(matchId);
+                Variables.moveNpc[matchId] = 0;
+            }
+            var message = JsonConvert.SerializeObject((Variables.matches[matchId].players.ToList(), Variables.map,
+                Variables.pickables[matchId].ToList(), Variables.projectiles[matchId].ToList(), Variables.traps[matchId].ToList(),
+                Variables.obstacles[matchId].ToList(), Variables.npcs[matchId].ToList()));
+            foreach (var item in Variables.matchIds[matchId])
+            {
+                Sessions.SendTo(message, item);
+            }
+        }
+        private void NpcMovement(int matchId)
+        {
+            foreach (var npc in Variables.npcs[matchId])
+            {
+                //if (projectile == null) continue;
+                //RectangleF r = new Rectangle();
+                //var last = projectile.coordinates;
+                //var current = projectile.move();
+                //var dif = (last.Item1 - current.Item1, last.Item2 - current.Item2);
+                
+                int dir = rnd.Next(0, 5);
+                int pad = 5;
+                int mSize = 700;
+
+                var prev = npc.coordinates;
+                if (dir == 0)
+                {
+                    if (npc.coordinates.Item1 > npc.speed + pad)
+                    {
+                        npc.coordinates.Item1 -= npc.speed;
+                    }
+                    else
+                    {
+                        npc.coordinates.Item1 = pad;
+                    }
+                }
+                else if (dir == 1)
+                {
+                    if (npc.coordinates.Item1 + npc.speed + npc.size < mSize)
+                    {
+                        npc.coordinates.Item1 += npc.speed;
+                    }
+                    else
+                    {
+                        npc.coordinates.Item1 = mSize - npc.size + pad;
+                    }
+                }
+                if (dir == 2)
+                {
+                    if (npc.coordinates.Item2 > npc.speed + pad)
+                    {
+                        npc.coordinates.Item2 -= npc.speed;
+                    }
+                    else
+                    {
+                        npc.coordinates.Item2 = pad;
+                    }
+
+                }
+                else if (dir == 3)
+                {
+                    if (npc.coordinates.Item2 + npc.speed + npc.size < mSize)
+                    {
+                        npc.coordinates.Item2 += npc.speed;
+                    }
+                    else
+                    {
+                        npc.coordinates.Item2 = mSize - npc.size + pad;
+                    }
+                }
+
+                foreach (var obs in Variables.obstacles[matchId])
+                {
+                    var k = obs.collision(prev, npc.coordinates, npc.size);
+                    var diff = (prev.Item1 - npc.coordinates.Item1, prev.Item2 - npc.coordinates.Item2);
+                    if (k != (-1, -1))
+                    {
+                        if (diff.Item1 == 0)
+                        {
+                            npc.coordinates.Item2 = k.Item2;
+                        }
+                        else
+                        {
+                            npc.coordinates.Item1 = k.Item1;
+                        }
+                    }
+                }
+                foreach (var player in Variables.matches[matchId].players)
+                {
+                    var k = player.playerClass.collision(prev, npc.coordinates, npc.size);
+                    var diff = (prev.Item1 - npc.coordinates.Item1, prev.Item2 - npc.coordinates.Item2);
+                    if (k != (-1, -1))
+                    {
+                        if (diff.Item1 == 0)
+                        {
+                            npc.coordinates.Item2 = k.Item2;
+                        }
+                        else
+                        {
+                            npc.coordinates.Item1 = k.Item1;
+                        }
+                        player.playerClass.takeDamage(npc.damage);
+                    }
+                }
+            }
+
+        }
+        
+        private static void BulletMovement(int matchId)
+        {
+            foreach (var projectile in Variables.projectiles[matchId].ToList())
+            {
+                if (projectile == null) continue;
+                RectangleF r = new Rectangle();
+                var last = projectile.coordinates;
+                var current = projectile.move();
+                //var dif = (last.Item1 - current.Item1, last.Item2 - current.Item2);
+                if (current.Item1 > 700 || current.Item2 > 700 || current.Item1 < 5 || current.Item2 < 5)
+                {
+                    try
+                    {
+                        Variables.projectiles[matchId].Remove(projectile);
+                    }
+                    catch (Exception) { }
+                }
+                var toRemovePlayer = new List<Player>();
+
+                foreach (var player in Variables.matches[matchId].players)
+                {
+                    if (player.playerClass == projectile.attacker) continue;
+                    var k = player.playerClass.collision(last, projectile.coordinates, projectile.size);
+                    //var diff = (last.Item1 - projectile.coordinates.Item1, last.Item2 - projectile.coordinates.Item2);
+                    if (k != (-1, -1))
+                    {
+                        try
+                        {
+                            if (player.playerClass.takeDamage(projectile.attacker.damage))
+                            {
+                                toRemovePlayer.Add(player);
+                            }
+                            player.playerClass.takeDamage(projectile.attacker.damage);
+                            Variables.projectiles[matchId].Remove(projectile);
+                        }
+                        catch (Exception) { }
+                    }
+                }
+                foreach (var player in toRemovePlayer)
+                {
+                    Variables.matches[matchId].players.Remove(player);
+                }
+                var toRemoveNpc = new List<Npc>();
+                foreach (var npc in Variables.npcs[matchId])
+                {
+                    var k = npc.collision(last, projectile.coordinates, projectile.size);
+                    //var diff = (last.Item1 - c.coordinates.Item1, last.Item2 - c.coordinates.Item2);
+
+
+                    //var k = player.playerClass.collision(prev, npc.coordinates, npc.size);
+                    //var diff = (prev.Item1 - npc.coordinates.Item1, prev.Item2 - npc.coordinates.Item2);
+                    if (k != (-1, -1))
+                    {
+                        try
+                        {
+                            if (npc.takeDamage(projectile.attacker.damage))
+                            {
+                                toRemoveNpc.Add(npc);
+                            }
+                            Variables.projectiles[matchId].Remove(projectile);
+                        }
+                        catch (Exception) { }
+                    }
+                }
+                foreach (var npc in toRemoveNpc)
+                {
+                    //Variables.npcs[matchId].Remove(npc);
+                }
             }
         }
     }

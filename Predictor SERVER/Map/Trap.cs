@@ -9,7 +9,7 @@ namespace Predictor_SERVER.Map
 {
     public class Trap : MapObject
     {
-        int damage;
+        public int damage = 1;
         string description;
         string name;
 
