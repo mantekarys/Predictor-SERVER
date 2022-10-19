@@ -468,6 +468,7 @@ namespace Predictor_SERVER
                 foreach (var npc in toRemoveNpc)
                 {
                     Variables.npcs[matchId].Remove(npc);
+                    Variables.pickables[matchId].Add(npc.OnDeath());
                 }
                 foreach (var obs in Variables.obstacles[matchId])
                 {
