@@ -54,5 +54,91 @@ namespace Predictor_SERVER.Character
             clone.ability = new Ability(100,"Makes character faster",50,"Speed");
             return clone;
         }
+        public void calculateAction(Random rnd, int matchId)
+        {
+            int dir = rnd.Next(0, 5);
+            int pad = 5;
+            int mSize = 700;
+
+            var prev = this.coordinates;
+            if (dir == 0)
+            {
+                if (this.coordinates.Item1 > this.speed + pad)
+                {
+                    this.coordinates.Item1 -= this.speed;
+                }
+                else
+                {
+                    this.coordinates.Item1 = pad;
+                }
+            }
+            else if (dir == 1)
+            {
+                if (this.coordinates.Item1 + this.speed + this.size < mSize)
+                {
+                    this.coordinates.Item1 += this.speed;
+                }
+                else
+                {
+                    this.coordinates.Item1 = mSize - this.size + pad;
+                }
+            }
+            if (dir == 2)
+            {
+                if (this.coordinates.Item2 > this.speed + pad)
+                {
+                    this.coordinates.Item2 -= this.speed;
+                }
+                else
+                {
+                    this.coordinates.Item2 = pad;
+                }
+
+            }
+            else if (dir == 3)
+            {
+                if (this.coordinates.Item2 + this.speed + this.size < mSize)
+                {
+                    this.coordinates.Item2 += this.speed;
+                }
+                else
+                {
+                    this.coordinates.Item2 = mSize - this.size + pad;
+                }
+            }
+            foreach (var obs in Variables.obstacles[matchId])
+            {
+                var k = obs.collision(prev, this.coordinates, this.size);
+                var diff = (prev.Item1 - this.coordinates.Item1, prev.Item2 - this.coordinates.Item2);
+                if (k != (-1, -1))
+                {
+                    if (diff.Item1 == 0)
+                    {
+                        this.coordinates.Item2 = k.Item2;
+                    }
+                    else
+                    {
+                        this.coordinates.Item1 = k.Item1;
+                    }
+                }
+            }
+            foreach (var player in Variables.matches[matchId].players)
+            {
+                var k = player.playerClass.collision(prev, this.coordinates, this.size);
+                var diff = (prev.Item1 - this.coordinates.Item1, prev.Item2 - this.coordinates.Item2);
+                if (k != (-1, -1))
+                {
+                    if (diff.Item1 == 0)
+                    {
+                        this.coordinates.Item2 = k.Item2;
+                    }
+                    else
+                    {
+                        this.coordinates.Item1 = k.Item1;
+                    }
+                    player.playerClass.takeDamage(this.damage);
+                }
+            }
+        }
     }
 }

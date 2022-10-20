@@ -375,119 +375,38 @@ namespace Predictor_SERVER
         }
         private void NpcMovement(int matchId)
         {
-            int index = 0;
             foreach (var npc in Variables.npcs[matchId])
             {
-                ActivateNpcAbility(index++, matchId);
-                int dir = rnd.Next(0, 5);
-                int pad = 5;
-                int mSize = 700;
-
-                var prev = npc.coordinates;
-                if (dir == 0)
-                {
-                    if (npc.coordinates.Item1 > npc.speed + pad)
-                    {
-                        npc.coordinates.Item1 -= npc.speed;
-                    }
-                    else
-                    {
-                        npc.coordinates.Item1 = pad;
-                    }
-                }
-                else if (dir == 1)
-                {
-                    if (npc.coordinates.Item1 + npc.speed + npc.size < mSize)
-                    {
-                        npc.coordinates.Item1 += npc.speed;
-                    }
-                    else
-                    {
-                        npc.coordinates.Item1 = mSize - npc.size + pad;
-                    }
-                }
-                if (dir == 2)
-                {
-                    if (npc.coordinates.Item2 > npc.speed + pad)
-                    {
-                        npc.coordinates.Item2 -= npc.speed;
-                    }
-                    else
-                    {
-                        npc.coordinates.Item2 = pad;
-                    }
-
-                }
-                else if (dir == 3)
-                {
-                    if (npc.coordinates.Item2 + npc.speed + npc.size < mSize)
-                    {
-                        npc.coordinates.Item2 += npc.speed;
-                    }
-                    else
-                    {
-                        npc.coordinates.Item2 = mSize - npc.size + pad;
-                    }
-                }
-
-                foreach (var obs in Variables.obstacles[matchId])
-                {
-                    var k = obs.collision(prev, npc.coordinates, npc.size);
-                    var diff = (prev.Item1 - npc.coordinates.Item1, prev.Item2 - npc.coordinates.Item2);
-                    if (k != (-1, -1))
-                    {
-                        if (diff.Item1 == 0)
-                        {
-                            npc.coordinates.Item2 = k.Item2;
-                        }
-                        else
-                        {
-                            npc.coordinates.Item1 = k.Item1;
-                        }
-                    }
-                }
-                foreach (var player in Variables.matches[matchId].players)
-                {
-                    var k = player.playerClass.collision(prev, npc.coordinates, npc.size);
-                    var diff = (prev.Item1 - npc.coordinates.Item1, prev.Item2 - npc.coordinates.Item2);
-                    if (k != (-1, -1))
-                    {
-                        if (diff.Item1 == 0)
-                        {
-                            npc.coordinates.Item2 = k.Item2;
-                        }
-                        else
-                        {
-                            npc.coordinates.Item1 = k.Item1;
-                        }
-                        player.playerClass.takeDamage(npc.damage);
-                    }
-                }
+                ActivateNpcAbility(npc, matchId);
+                npc.calculateAction(rnd, matchId);
             }
 
         }
-        private void ActivateNpcAbility(int index, int matchId)
+        private void ActivateNpcAbility(Npc npc, int matchId)
         {
-            Variables.npcs[matchId][index].ability.cooldownLeft--;
-            Variables.npcs[matchId][index].ability.durationLeft--;
-            if (Variables.npcs[matchId][index].ability.cooldownLeft == 0)
+            Ability ability = npc.ability;
+            ability.cooldownLeft--;
+            ability.durationLeft--;
+            if (ability.cooldownLeft == 0)
             {
-                if (Variables.npcs[matchId][index].ability.name == "Speed")
+                if (ability.name == "Speed")
                 {
-                    Variables.npcs[matchId][index].speed += 20;
-                    Variables.npcs[matchId][index].ability.durationLeft = Variables.npcs[matchId][index].ability.duration;
-                    Variables.npcs[matchId][index].ability.cooldownLeft = Variables.npcs[matchId][index].ability.cooldown;
-                    Variables.npcs[matchId][index].ability.activated = true;
+                    npc.speed += 20;
+                    npc.ability.durationLeft = npc.ability.duration;
+                    npc.ability.cooldownLeft = npc.ability.cooldown;
+                    npc.ability.activated = true;
                 }
             }
             else
             {
-                if (Variables.npcs[matchId][index].ability.activated && Variables.npcs[matchId][index].ability.durationLeft == 0)
+                if (ability.activated && ability.durationLeft == 0)
                 {
-                    Variables.npcs[matchId][index].speed -= 20;
-                    Variables.npcs[matchId][index].ability.activated = false;
+                    npc.speed -= 20;
+                    ability.activated = false;
                 }
             }
+            npc.ability = ability;
+
         }
         
         private static void BulletMovement(int matchId)
