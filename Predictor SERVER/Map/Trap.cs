@@ -9,19 +9,14 @@ namespace Predictor_SERVER.Map
 {
     public class Trap : MapObject
     {
-        public int damage = 1;
+        public int damage;
         string description;
         string name;
-
-        public Trap(int x, int y, string color)
+        public Trap()
         {
-            size = 5;
-            coordinates = (x, y);
 
-            //damage = 5;
             description = "";
             name = "";
-            this.color = color;
         }
 
         public bool collision((int, int) prev, (int, int) curr, int size)

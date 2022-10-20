@@ -89,6 +89,7 @@
     <Compile Include="Map\SpeedPotion.cs" />
     <Compile Include="Map\SpeedPowerUp.cs" />
     <Compile Include="Map\Trap.cs" />
+    <Compile Include="Map\ObstacleBuilder.cs" />
     <Compile Include="Map\TrapBuilder.cs" />
     <Compile Include="Server\Player.cs" />
     <Compile Include="Program.cs" />
