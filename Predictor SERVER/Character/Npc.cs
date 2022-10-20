@@ -1,14 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Xml.Linq;
 using Predictor_SERVER.Map;
 
 namespace Predictor_SERVER.Character
 {
-    internal class Npc : Character
+    public class Npc : Character, IPrototype
     {
-        public Npc()
+        public Npc(int size, int speed, int health, int damage, int x, int y)
         {
+            this.size = size;
+            this.speed = speed;
+            this.health = health;
+            this.damage = damage;
+            this.coordinates.Item1 = x;
+            this.coordinates.Item2 = y;
+            this.ability = new Ability(100, "Makes character faster", 50, "Speed");
         }
 
         public override void move()
@@ -34,6 +43,16 @@ namespace Predictor_SERVER.Character
 
             }
             return drop;
+        }
+        public Npc shallowCopy()
+        {
+            return (Npc)this.MemberwiseClone();
+        }
+        public Npc deepCopy()
+        {
+            Npc clone = (Npc)this.MemberwiseClone();
+            clone.ability = new Ability(100,"Makes character faster",50,"Speed");
+            return clone;
         }
     }
 }
