@@ -10,7 +10,7 @@ namespace Predictor_SERVER.Map
     {
         public new string name = "Damage power up";
         public new string description = "Increases damage";
-        public new int experationTime = 200;
+        public new DateTime experationTime = DateTime.MinValue;
         public new int remainingTime = 200;
         public DamagePowerUp((int, int) coord)
         {
@@ -18,7 +18,7 @@ namespace Predictor_SERVER.Map
         }
         public override void pickedUp(Class character)
         {
-            character.ApplyPowerUp(this);
+            character.applyPowerUp(this);
         }
 
     }

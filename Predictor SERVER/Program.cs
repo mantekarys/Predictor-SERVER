@@ -29,7 +29,7 @@ namespace Predictor_SERVER
         public static List<List<Projectile>> projectiles = new List<List<Projectile>>();
         public static List<Server.Match> matches = new List<Server.Match>();
         public static List<List<string>> matchIds = new List<List<string>>();
-
+        internal static UseItem useItem = new UseItem();
 
         public static List<int> moveNpc = new List<int>();
         public static List<List<Npc>> npcs = new List<List<Npc>>();
@@ -62,6 +62,7 @@ namespace Predictor_SERVER
     public class Echo : WebSocketBehavior, ISubject
     {
         Random rnd = new Random(978);
+
         protected override void OnMessage(MessageEventArgs e)
         {
             if (e.Data.Length > 3)
@@ -99,7 +100,7 @@ namespace Predictor_SERVER
                     Variables.obstacles.Add(new List<Obstacle>());
                     Variables.traps[matchId] = Variables.createTraps();
                     Variables.obstacles[matchId] = Variables.createObstacles();
-                    Variables.pickables.Add(new List<PickUp>() { new DamagePotion((350, 350)) });
+                    Variables.pickables.Add(new List<PickUp>() { new DamagePowerUp((350, 350)) });
                     Variables.projectiles.Add(new List<Projectile>());
 
                     Npc n1 = new Npc(15, 5, 5, 1, 30, 30);
@@ -138,9 +139,11 @@ namespace Predictor_SERVER
                 {
                     var c = Variables.matches[matchId].players[which].playerClass;
                     var obstacles = Variables.obstacles[matchId];
+                    var pickups = Variables.pickables[matchId];
                     int pad = 5;
                     foreach (var keyData in keys)
                     {
+                        #region next position clac
                         var tempC = c.coordinates;
                         if (keyData == Keys.Left)
                         {
@@ -187,6 +190,8 @@ namespace Predictor_SERVER
                                 c.coordinates.Item2 = map.size - c.size + 5;
                             }
                         }
+                        #endregion End next Position clac
+                        #region collision calc
                         foreach (var obs in obstacles)
                         {
                             var k = obs.collision(tempC, c.coordinates, c.size);
@@ -248,6 +253,31 @@ namespace Predictor_SERVER
                             }
                         }
 
+                        for(int i =0; i< Variables.pickables[matchId].Count;i++)// checks whether a pickup has been touched and adds it to respected player
+                        {
+                            
+                            if(Variables.pickables[matchId][i] is Item)
+                            {
+                                var tempPickup = Variables.pickables[matchId][i] as Item;
+                                if (tempPickup.collision(tempC, c.coordinates, c.size) && c.inventoryCheck()<3)
+                                {
+                                    c.addToInventory(tempPickup);
+                                    Variables.pickables[matchId].Remove(Variables.pickables[matchId][i]);
+                                }
+                            }
+                            else if(Variables.pickables[matchId][i] is PowerUp)
+                            {
+                                var tempPickup = Variables.pickables[matchId][i] as PowerUp;
+                                if (tempPickup.collision(tempC, c.coordinates, c.size))
+                                {
+                                    c.applyPowerUp(tempPickup);
+                                    Variables.pickables[matchId].Remove(Variables.pickables[matchId][i]);
+                                }
+                            } 
+                        }
+                        #endregion collision calc
+                        #region Other key read
+
                         if (keyData == Keys.LButton)
                         {
                             if (DateTime.Now.Ticks / 10000 - c.lastAttack.Ticks / 10000 > c.weapon.attackSpeed)
@@ -280,6 +310,20 @@ namespace Predictor_SERVER
                                 Variables.projectiles[matchId].Add(c.attack(direction));
                             }
                         }
+                        if (keyData == Keys.D1)
+                        {
+                            Variables.useItem.Execute(c, 0);
+                        }
+                        if (keyData == Keys.D2)
+                        {
+                            Variables.useItem.Execute(c, 1);
+                        }
+                        if (keyData == Keys.D3)
+                        {
+                            Variables.useItem.Execute(c, 2);
+                        }
+                        #endregion Other key read end
+
                     }
                     Variables.matches[matchId].players[which].playerClass = c;
                 }
@@ -314,6 +358,10 @@ namespace Predictor_SERVER
             {
                 NpcMovement(matchId);
                 Variables.moveNpc[matchId] = 0;
+            }
+            foreach(Player player in Variables.matches[matchId].players) // on timer tik call Class's activeItemTimeExperationCheck method
+            {
+                player.playerClass.activeItemTimeExperationCheck();
             }
             var message = JsonConvert.SerializeObject((Variables.matches[matchId].players.ToList(), Variables.map,
                 Variables.pickables[matchId].ToList(), Variables.projectiles[matchId].ToList(), Variables.traps[matchId].ToList(),
