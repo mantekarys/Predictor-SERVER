@@ -58,10 +58,11 @@ namespace Predictor_SERVER.Character
                 case "DamagePowerUp":
                     this.damage += 20;
                     break;
-/*              case "AttackSpeedPowerUp":
-                    this.attackspeed += 20;
+             case "AttackSpeedPowerUp":
+                    this.weapon.attackSpeed = (int)(this.weapon.attackSpeed * 0.8);
+                    if (this.weapon.attackSpeed < 1) this.weapon.attackSpeed=1;
                     break;
-*/
+
                 default:
                     break;
             }
@@ -95,10 +96,11 @@ namespace Predictor_SERVER.Character
                     case "DamagePotion":
                         this.damage += 50;
                         break;
-/*                  case "AttackSpeedPotion":
-                        this.attackspeed += 50;
+                 case "AttackSpeedPotion":
+                        this.weapon.attackSpeed = (int)(this.weapon.attackSpeed * 0.8);
+                        if (this.weapon.attackSpeed < 1) this.weapon.attackSpeed = 1;
                         break;
-*/
+
                     default:
                         break;
 
@@ -124,10 +126,10 @@ namespace Predictor_SERVER.Character
                     case "DamagePotion":
                         this.damage -= 50;
                         break;
-/*                  case "AttackSpeedPotion":
-                        this.attackspeed -= 50;
+                    case "AttackSpeedPotion":
+                        this.weapon.attackSpeed = (int)(this.weapon.attackSpeed * 1.25);
                         break;
-*/
+
                     default:
                         break;
 
@@ -161,10 +163,10 @@ namespace Predictor_SERVER.Character
                         case "DamagePotion":
                             this.damage -= 50;
                             break ;
-/*                      case "AttackSpeedPotion":
-                            this.attackspeed -= 50;
+                        case "AttackSpeedPotion":
+                            this.weapon.attackSpeed = (int)(this.weapon.attackSpeed * 1.25);
                             break;
-*/                      default:
+                        default:
                             break;
                             
                     }
