@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Predictor_SERVER.Character;
 using Predictor_SERVER.Map;
+using Predictor_SERVER.Server;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -26,7 +27,7 @@ namespace Predictor_SERVER
         public static List<List<Projectile>> projectiles = new List<List<Projectile>>();
         public static List<Server.Match> matches = new List<Server.Match>();
         public static List<List<string>> matchIds = new List<List<string>>();
-
+        internal static UseItem useItem = new UseItem();
         public static void SendMessages(int matchId)
         {
             Variables.started = true;
@@ -37,6 +38,10 @@ namespace Predictor_SERVER
         }
         public static void Broadcast(int matchId)
         {
+            foreach(Player player in Variables.matches[matchId].players) // on timer tik call Class's activeItemTimeExperationCheck method
+            {
+                player.playerClass.activeItemTimeExperationCheck();
+            }
             foreach (var projectile in projectiles[matchId].ToList())
             {
                 if (projectile == null) continue;
@@ -88,6 +93,8 @@ namespace Predictor_SERVER
     }
     public class Echo : WebSocketBehavior
     {
+        
+
         protected override void OnMessage(MessageEventArgs e)
         {
             if (e.Data.Length > 3)
@@ -237,9 +244,9 @@ namespace Predictor_SERVER
                             if(Variables.pickables[matchId][i] is Item)
                             {
                                 var tempPickup = Variables.pickables[matchId][i] as Item;
-                                if (tempPickup.collision(tempC, c.coordinates, c.size) && c.inventoryCheck()<=3)
+                                if (tempPickup.collision(tempC, c.coordinates, c.size) && c.inventoryCheck()<3)
                                 {
-                                    c.AddToInventory(tempPickup);
+                                    c.addToInventory(tempPickup);
                                     Variables.pickables[matchId].Remove(Variables.pickables[matchId][i]);
                                 }
                             }
@@ -248,12 +255,13 @@ namespace Predictor_SERVER
                                 var tempPickup = Variables.pickables[matchId][i] as PowerUp;
                                 if (tempPickup.collision(tempC, c.coordinates, c.size))
                                 {
-                                    c.ApplyPowerUp(tempPickup);
+                                    c.applyPowerUp(tempPickup);
                                     Variables.pickables[matchId].Remove(Variables.pickables[matchId][i]);
                                 }
                             } 
                         }
                         #endregion collision calc
+                        #region Other key read
                         if (keyData == Keys.LButton)
                         {
                             if (DateTime.Now.Ticks / 10000 - c.lastAttack.Ticks / 10000 > c.weapon.attackSpeed)
@@ -286,6 +294,20 @@ namespace Predictor_SERVER
                                 Variables.projectiles[matchId].Add(c.attack(direction));
                             }
                         }
+                        if (keyData == Keys.D1)
+                        {
+                            Variables.useItem.Execute(c, 0);
+                        }
+                        if (keyData == Keys.D2)
+                        {
+                            Variables.useItem.Execute(c, 1);
+                        }
+                        if (keyData == Keys.D3)
+                        {
+                            Variables.useItem.Execute(c, 2);
+                        }
+                        #endregion Other key read end
+
                     }
                     Variables.matches[matchId].players[which].playerClass = c;
                 }

@@ -7,7 +7,6 @@ namespace Predictor_SERVER.Map
     public abstract class Item : PickUp
     {
         
-        public abstract void Use();
         public bool collision((int, int) prev, (int, int) curr, int size)
         {
             int distPrev = prev.Item1 + prev.Item2;
