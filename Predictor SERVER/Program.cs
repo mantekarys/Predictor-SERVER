@@ -401,7 +401,7 @@ namespace Predictor_SERVER
             {
                 if (ability.activated && ability.durationLeft == 0)
                 {
-                    npc.speed -= 20;
+                    if(ability.name == "Speed")npc.speed -= 20;
                     ability.activated = false;
                 }
             }
