@@ -18,7 +18,7 @@ namespace Predictor_SERVER.Map
             size = 5;
             coordinates = (x, y);
 
-            damage = 5;
+            //damage = 5;
             description = "";
             name = "";
             this.color = color;

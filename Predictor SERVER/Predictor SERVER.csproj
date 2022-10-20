@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Character\Ability.cs" />
     <Compile Include="Character\Character.cs" />
     <Compile Include="Character\Class.cs" />
     <Compile Include="Character\ClassCreator.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="Character\Gunner.cs" />
     <Compile Include="Character\GunnerCreator.cs" />
     <Compile Include="Character\GunWeapon.cs" />
+    <Compile Include="Character\IPrototype.cs" />
     <Compile Include="Character\LaserWeaponcs.cs" />
     <Compile Include="Character\MeleeWeapon.cs" />
     <Compile Include="Character\Projectile.cs" />

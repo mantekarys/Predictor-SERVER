@@ -14,6 +14,7 @@ namespace Predictor_SERVER.Character
         public int health;
         public int damage;
         public (int,int) coordinates;
+        public Ability ability;
 
         public abstract void move();//event
         public bool takeDamage(int damage)

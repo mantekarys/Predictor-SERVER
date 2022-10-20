@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using WebSocketSharp;
@@ -101,7 +102,14 @@ namespace Predictor_SERVER
                     Variables.pickables.Add(new List<PickUp>() { new DamagePotion((350, 350)) });
                     Variables.projectiles.Add(new List<Projectile>());
 
-                    Variables.npcs.Add(new List<Npc>() { new Npc(15, 5, 5, 1, 30, 30), new Npc(15, 5, 5, 1, 655, 30), new Npc(15, 5, 5, 1, 30, 655), new Npc(15, 5, 5, 1, 655, 655) });
+                    Npc n1 = new Npc(15, 5, 5, 1, 30, 30);
+                    Npc n2 = n1.shallowCopy();
+                    n2.coordinates = (655, 30);
+                    Npc n3 = n1.deepCopy();
+                    n3.coordinates = (30, 655);
+                    Npc n4 = n1.deepCopy();
+                    n4.coordinates = (655, 655);
+                    Variables.npcs.Add(new List<Npc>() { n1, n2, n3, n4});
                     Variables.moveNpc.Add(0);
                     var message = JsonConvert.SerializeObject((matchId, Variables.matches[matchId].peopleAmount - 1));
                     Send(message);
@@ -317,8 +325,10 @@ namespace Predictor_SERVER
         }
         private void NpcMovement(int matchId)
         {
+            int index = 0;
             foreach (var npc in Variables.npcs[matchId])
-            {           
+            {
+                ActivateNpcAbility(index++, matchId);
                 int dir = rnd.Next(0, 5);
                 int pad = 5;
                 int mSize = 700;
@@ -405,6 +415,29 @@ namespace Predictor_SERVER
                 }
             }
 
+        }
+        private void ActivateNpcAbility(int index, int matchId)
+        {
+            Variables.npcs[matchId][index].ability.cooldownLeft--;
+            Variables.npcs[matchId][index].ability.durationLeft--;
+            if (Variables.npcs[matchId][index].ability.cooldownLeft == 0)
+            {
+                if (Variables.npcs[matchId][index].ability.name == "Speed")
+                {
+                    Variables.npcs[matchId][index].speed += 20;
+                    Variables.npcs[matchId][index].ability.durationLeft = Variables.npcs[matchId][index].ability.duration;
+                    Variables.npcs[matchId][index].ability.cooldownLeft = Variables.npcs[matchId][index].ability.cooldown;
+                    Variables.npcs[matchId][index].ability.activated = true;
+                }
+            }
+            else
+            {
+                if (Variables.npcs[matchId][index].ability.activated && Variables.npcs[matchId][index].ability.durationLeft == 0)
+                {
+                    Variables.npcs[matchId][index].speed -= 20;
+                    Variables.npcs[matchId][index].ability.activated = false;
+                }
+            }
         }
         
         private static void BulletMovement(int matchId)
