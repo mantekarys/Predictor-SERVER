@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Predictor_SERVER.Character;
 using Predictor_SERVER.Map;
+using Predictor_SERVER.Server;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -37,6 +38,10 @@ namespace Predictor_SERVER
         }
         public static void Broadcast(int matchId)
         {
+            foreach(Player player in Variables.matches[matchId].players) // on timer tik call Class's activeItemTimeExperationCheck method
+            {
+                player.playerClass.activeItemTimeExperationCheck();
+            }
             foreach (var projectile in projectiles[matchId].ToList())
             {
                 if (projectile == null) continue;
