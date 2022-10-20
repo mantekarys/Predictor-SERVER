@@ -64,24 +64,26 @@ namespace Predictor_SERVER
         public static List<Obstacle> createObstacles()
         {
             List<Obstacle> matchObstacles = new List<Obstacle>();
+            var builder = new ObstacleBuilder();
             Random rnd = new Random(123);
             int obsCount = rnd.Next(1, 11);
             for (int i = 0; i < obsCount; i++)
             {
-                Obstacle obstacle = new Obstacle(rnd.Next(5, 685), rnd.Next(5, 685), "Red");
-                matchObstacles.Add(obstacle);
+                builder.build(rnd.Next(5, 685), rnd.Next(5, 685));
+                matchObstacles.Add(builder.GetObstacle());
             }
             return matchObstacles;
         }
         public static List<Trap> createTraps()
         {
             List<Trap> matchTraps = new List<Trap>();
+            var builder = new TrapBuilder();
             Random rnd = new Random(552);
             int trapCount = rnd.Next(5, 16);
             for (int i = 0; i < trapCount; i++)
             {
-                Trap trap = new Trap(rnd.Next(5, 695), rnd.Next(5, 695), "Blue");
-                matchTraps.Add(trap);
+                builder.build(rnd.Next(5, 695), rnd.Next(5, 695));
+                matchTraps.Add(builder.GetTrap());
             }
             return matchTraps;
         }

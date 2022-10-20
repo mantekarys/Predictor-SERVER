@@ -6,50 +6,50 @@ using System.Threading.Tasks;
 
 namespace Predictor_SERVER.Map
 {
-    public class TrapBuilder : Builder
+    public class ObstacleBuilder : Builder
     {
-        private Trap trap = new Trap();
-        public TrapBuilder()
+        private Obstacle obstacle = new Obstacle();
+        public ObstacleBuilder()
         {
             this.Reset();
         }
         public void Reset()
         {
-            this.trap = new Trap();
+            this.obstacle = new Obstacle();
         }
 
         public void build(int x, int y)
         {
             addColor();
             addSize();
-            addDamage();
+            addHealth();
             addCoordinates(x, y);
         }
 
         public override void addColor()
         {
-            this.trap.color = "Blue";
+            this.obstacle.color = "Red";
         }
 
         public override void addSize()
         {
-            this.trap.size = 5;
+            this.obstacle.size = 20;
         }
 
-        public void addDamage()
+        public void addHealth()
         {
-            this.trap.damage = 3;
+            this.obstacle.health = 5;
         }
 
         public void addCoordinates(int x, int y)
         {
-            this.trap.coordinates = (x, y);
+            this.obstacle.coordinates = (x, y);
         }
 
 
-        public Trap GetTrap()
+        public Obstacle GetObstacle()
         {
-            Trap result = this.trap;
+            Obstacle result = this.obstacle;
             this.Reset();
             return result;   
         }
