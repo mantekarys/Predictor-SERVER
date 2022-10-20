@@ -38,7 +38,7 @@ namespace Predictor_SERVER.Map
 
         public void addDamage()
         {
-            this.trap.damage = 3;
+            this.trap.damage = 1;
         }
 
         public void addCoordinates(int x, int y)
