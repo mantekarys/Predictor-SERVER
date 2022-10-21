@@ -8,6 +8,7 @@ using WebSocketSharp;
 using Newtonsoft.Json;
 using System.Globalization;
 using Predictor_SERVER.Map;
+using System.Windows.Forms;
 
 namespace Predictor_SERVER.Character
 {
@@ -174,17 +175,56 @@ namespace Predictor_SERVER.Character
                 }
             }
         }
-        public override void move()//event
+        public override void move(keyData)//event
         {
-            using (WebSocket ws = new WebSocket("ws://127.0.0.1:7890/EchoAll"))
+            var tempC = c.coordinates;
+            if (keyData == Keys.Left)
             {
+                if (c.coordinates.Item1 > c.speed + pad)
+                {
+                    c.coordinates.Item1 -= c.speed;
+                }
+                else
+                {
+                    c.coordinates.Item1 = pad;
+                }
+            }
+            else if (keyData == Keys.Right)
+            {
+                if (c.coordinates.Item1 + c.speed + c.size < map.size)
+                {
+                    c.coordinates.Item1 += c.speed;
+                }
+                else
+                {
+                    c.coordinates.Item1 = map.size - c.size + 5;
+                }
+            }
+            if (keyData == Keys.Up)
+            {
+                if (c.coordinates.Item2 > c.speed + pad)
+                {
+                    c.coordinates.Item2 -= c.speed;
+                }
+                else
+                {
+                    c.coordinates.Item2 = pad;
+                }
 
-                ws.Connect();
-
-                //var mes = JsonConvert.SerializeObject<Message>(e.Data);
-                //ws.Send(mes);
+            }
+            else if (keyData == Keys.Down)
+            {
+                if (c.coordinates.Item2 + c.speed + c.size < map.size)
+                {
+                    c.coordinates.Item2 += c.speed;
+                }
+                else
+                {
+                    c.coordinates.Item2 = map.size - c.size + 5;
+                }
             }
         }
+        public override void move() { }
 
         public void setWeaponAlgorithm(WeaponAlgorithm weapon)
         {

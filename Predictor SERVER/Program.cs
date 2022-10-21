@@ -106,7 +106,7 @@ namespace Predictor_SERVER
                     Variables.projectiles.Add(new List<Projectile>());
 
                     Npc n1 = new Npc(15, 5, 5, 1, 30, 30);
-                    Npc n2 = n1.shallowCopy();
+                    Npc n2 = n1.deepCopy();
                     n2.coordinates = (655, 30);
                     Npc n3 = n1.deepCopy();
                     n3.coordinates = (30, 655);
@@ -146,52 +146,7 @@ namespace Predictor_SERVER
                     foreach (var keyData in keys)
                     {
                         #region next position clac
-                        var tempC = c.coordinates;
-                        if (keyData == Keys.Left)
-                        {
-                            if (c.coordinates.Item1 > c.speed + pad)
-                            {
-                                c.coordinates.Item1 -= c.speed;
-                            }
-                            else
-                            {
-                                c.coordinates.Item1 = pad;
-                            }
-                        }
-                        else if (keyData == Keys.Right)
-                        {
-                            if (c.coordinates.Item1 + c.speed + c.size < map.size)
-                            {
-                                c.coordinates.Item1 += c.speed;
-                            }
-                            else
-                            {
-                                c.coordinates.Item1 = map.size - c.size + 5;
-                            }
-                        }
-                        if (keyData == Keys.Up)
-                        {
-                            if (c.coordinates.Item2 > c.speed + pad)
-                            {
-                                c.coordinates.Item2 -= c.speed;
-                            }
-                            else
-                            {
-                                c.coordinates.Item2 = pad;
-                            }
-
-                        }
-                        else if (keyData == Keys.Down)
-                        {
-                            if (c.coordinates.Item2 + c.speed + c.size < map.size)
-                            {
-                                c.coordinates.Item2 += c.speed;
-                            }
-                            else
-                            {
-                                c.coordinates.Item2 = map.size - c.size + 5;
-                            }
-                        }
+                        
                         #endregion End next Position clac
                         #region collision calc
                         foreach (var obs in obstacles)
