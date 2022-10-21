@@ -49,6 +49,7 @@
     <Reference Include="websocket-sharp, Version=1.0.2.32519, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
       <HintPath>..\packages\WebSocketSharp-NonPreRelease.1.0.0\lib\net35\websocket-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Character\Ability.cs" />
@@ -59,10 +60,13 @@
     <Compile Include="Character\Gunner.cs" />
     <Compile Include="Character\GunnerCreator.cs" />
     <Compile Include="Character\GunWeapon.cs" />
+    <Compile Include="Character\NpcMovement.cs" />
     <Compile Include="Character\IPrototype.cs" />
     <Compile Include="Character\ICommand.cs" />
     <Compile Include="Character\LaserWeaponcs.cs" />
     <Compile Include="Character\MeleeWeapon.cs" />
+    <Compile Include="Character\NpcCircleType.cs" />
+    <Compile Include="Character\NpcRandomType.cs" />
     <Compile Include="Character\Projectile.cs" />
     <Compile Include="Character\Npc.cs" />
     <Compile Include="Character\Rogue.cs" />

@@ -145,9 +145,8 @@ namespace Predictor_SERVER
                     int pad = 5;
                     foreach (var keyData in keys)
                     {
-                        #region next position clac
-                        
-                        #endregion End next Position clac
+                        c.move(keyData, map);
+                        var tempC = c.coordinates;
                         #region collision calc
                         foreach (var obs in obstacles)
                         {
@@ -330,10 +329,13 @@ namespace Predictor_SERVER
         }
         private void NpcMovement(int matchId)
         {
+            int which = 0;
+            string[] types = new string[] { "random", "circle" };
             foreach (var npc in Variables.npcs[matchId])
             {
                 ActivateNpcAbility(npc, matchId);
-                npc.calculateAction(rnd, matchId);
+                npc.calculateAction(types[which], matchId);
+                which = (which + 1) % 2;
             }
 
         }

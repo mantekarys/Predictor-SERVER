@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.Globalization;
 using Predictor_SERVER.Map;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace Predictor_SERVER.Character
 {
@@ -175,52 +176,52 @@ namespace Predictor_SERVER.Character
                 }
             }
         }
-        public override void move(keyData)//event
+        public void move(Keys keyData, Map.Map map)//event
         {
-            var tempC = c.coordinates;
+            int pad = 5;
             if (keyData == Keys.Left)
             {
-                if (c.coordinates.Item1 > c.speed + pad)
+                if (this.coordinates.Item1 > this.speed + pad)
                 {
-                    c.coordinates.Item1 -= c.speed;
+                    this.coordinates.Item1 -= this.speed;
                 }
                 else
                 {
-                    c.coordinates.Item1 = pad;
+                    this.coordinates.Item1 = pad;
                 }
             }
             else if (keyData == Keys.Right)
             {
-                if (c.coordinates.Item1 + c.speed + c.size < map.size)
+                if (this.coordinates.Item1 + this.speed + this.size < map.size)
                 {
-                    c.coordinates.Item1 += c.speed;
+                    this.coordinates.Item1 += this.speed;
                 }
                 else
                 {
-                    c.coordinates.Item1 = map.size - c.size + 5;
+                    this.coordinates.Item1 = map.size - this.size + 5;
                 }
             }
             if (keyData == Keys.Up)
             {
-                if (c.coordinates.Item2 > c.speed + pad)
+                if (this.coordinates.Item2 > this.speed + pad)
                 {
-                    c.coordinates.Item2 -= c.speed;
+                    this.coordinates.Item2 -= this.speed;
                 }
                 else
                 {
-                    c.coordinates.Item2 = pad;
+                    this.coordinates.Item2 = pad;
                 }
 
             }
             else if (keyData == Keys.Down)
             {
-                if (c.coordinates.Item2 + c.speed + c.size < map.size)
+                if (this.coordinates.Item2 + this.speed + this.size < map.size)
                 {
-                    c.coordinates.Item2 += c.speed;
+                    this.coordinates.Item2 += this.speed;
                 }
                 else
                 {
-                    c.coordinates.Item2 = map.size - c.size + 5;
+                    this.coordinates.Item2 = map.size - this.size + 5;
                 }
             }
         }
