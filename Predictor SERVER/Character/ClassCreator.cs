@@ -14,7 +14,6 @@ namespace Predictor_SERVER.Character
         {
             int x = -1; 
             int y = -1;
-            //new Class(15, 10, 5, 1, 343, 10), new Class(15, 10, 5, 1, 343, 685)
             if (which == 0)
             {
                 x = 343;

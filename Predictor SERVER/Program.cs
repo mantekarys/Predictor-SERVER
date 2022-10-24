@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -106,13 +107,30 @@ namespace Predictor_SERVER
                     Variables.projectiles.Add(new List<Projectile>());
 
                     Npc n1 = new Npc(15, 5, 5, 1, 30, 30);
+                    n1.selectDeathType("item");
                     Npc n2 = n1.deepCopy();
                     n2.coordinates = (655, 30);
+                    n2.selectDeathType("powerUp");
                     Npc n3 = n1.deepCopy();
                     n3.coordinates = (30, 655);
+                    n3.selectDeathType("item");
                     Npc n4 = n1.deepCopy();
                     n4.coordinates = (655, 655);
+                    n4.selectDeathType("powerUp");
                     Variables.npcs.Add(new List<Npc>() { n1, n2, n3, n4});
+
+                    GCHandle handle = GCHandle.Alloc(n1.ability, GCHandleType.WeakTrackResurrection);
+                    int address = GCHandle.ToIntPtr(handle).ToInt32();
+                    Console.WriteLine(address);
+
+                    handle = GCHandle.Alloc(n2.ability, GCHandleType.WeakTrackResurrection);
+                    address = GCHandle.ToIntPtr(handle).ToInt32();
+                    Console.WriteLine(address);
+
+                    handle = GCHandle.Alloc(n3.ability, GCHandleType.WeakTrackResurrection);
+                    address = GCHandle.ToIntPtr(handle).ToInt32();
+                    Console.WriteLine(address);
+
                     Variables.moveNpc.Add(0);
                     var message = JsonConvert.SerializeObject((matchId, Variables.matches[matchId].peopleAmount - 1));
                     Send(message);
@@ -315,7 +333,7 @@ namespace Predictor_SERVER
                 NpcMovement(matchId);
                 Variables.moveNpc[matchId] = 0;
             }
-            foreach(Player player in Variables.matches[matchId].players) // on timer tik call Class's activeItemTimeExperationCheck method
+            foreach(Player player in Variables.matches[matchId].players) 
             {
                 player.playerClass.activeItemTimeExperationCheck();
             }
@@ -330,11 +348,12 @@ namespace Predictor_SERVER
         private void NpcMovement(int matchId)
         {
             int which = 0;
-            string[] types = new string[] { "random", "circle" };
+            string[] moveTypes = new string[] { "random", "circle" };
+            string[] deathTypes = new string[] { "item", "powerUp" };
             foreach (var npc in Variables.npcs[matchId])
             {
                 ActivateNpcAbility(npc, matchId);
-                npc.calculateAction(types[which], matchId);
+                npc.calculateAction(moveTypes[which], matchId);
                 which = (which + 1) % 2;
             }
 
