@@ -41,7 +41,7 @@ namespace Predictor_SERVER.Map
             this.trap.damage = 1;
         }
 
-        public void addCoordinates(int x, int y)
+        public override void addCoordinates(int x, int y)
         {
             this.trap.coordinates = (x, y);
         }

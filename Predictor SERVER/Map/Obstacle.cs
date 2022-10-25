@@ -12,15 +12,9 @@ namespace Predictor_SERVER.Map
     {
         public bool destructable;
         public int health;
-        //public Obstacle(int x, int y, string color)
         public Obstacle()
         {
-            //size = 20;
-            //coordinates = (x, y);
-
             destructable = true;
-            //health = 5;
-            //this.color = color;
         }
 
         public void takeDamage()

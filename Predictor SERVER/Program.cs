@@ -13,6 +13,7 @@ using System.Threading;
 using System.Windows.Forms;
 using WebSocketSharp;
 using WebSocketSharp.Server;
+using Logger = Predictor_SERVER.Server.Logger;
 using Timer = System.Timers.Timer;
 
 namespace Predictor_SERVER
@@ -65,6 +66,7 @@ namespace Predictor_SERVER
     public class Echo : WebSocketBehavior, ISubject
     {
         Random rnd = new Random(978);
+        Logger log = Logger.getInstance();
 
         protected override void OnMessage(MessageEventArgs e)
         {
@@ -95,6 +97,7 @@ namespace Predictor_SERVER
                 }
                 if (code == 752)//creates match
                 {
+                    log.WriteMessageWithDebug("Match created");
                     matchId = Variables.matches.Count;
                     Variables.matchIds.Add(new List<string>());
                     Variables.matchIds[matchId].Add(ID);
@@ -137,6 +140,7 @@ namespace Predictor_SERVER
                 }
                 if (code == 876)////joined match
                 {
+                    log.WriteMessageWithDebug("Match Joined");
                     matchId = int.Parse(text);
                     Variables.matchIds[matchId].Add(ID);
                     var message = JsonConvert.SerializeObject(Variables.matches[matchId].peopleAmount++);
@@ -160,7 +164,7 @@ namespace Predictor_SERVER
                     var c = Variables.matches[matchId].players[which].playerClass;
                     var obstacles = Variables.obstacles[matchId];
                     var pickups = Variables.pickables[matchId];
-                    int pad = 5;
+                    //int pad = 5;
                     foreach (var keyData in keys)
                     {
                         c.move(keyData, map);
@@ -360,6 +364,7 @@ namespace Predictor_SERVER
         }
         private void ActivateNpcAbility(Npc npc, int matchId)
         {
+
             Ability ability = npc.ability;
             ability.cooldownLeft--;
             ability.durationLeft--;
@@ -371,6 +376,7 @@ namespace Predictor_SERVER
                     npc.ability.durationLeft = npc.ability.duration;
                     npc.ability.cooldownLeft = npc.ability.cooldown;
                     npc.ability.activated = true;
+                    log.WriteMessageWithDebug("Npc ability activated");
                 }
             }
             else
@@ -379,6 +385,7 @@ namespace Predictor_SERVER
                 {
                     if(ability.name == "Speed")npc.speed -= 20;
                     ability.activated = false;
+                    log.WriteMessageWithDebug("Npc ability deactivated");
                 }
             }
             npc.ability = ability;
