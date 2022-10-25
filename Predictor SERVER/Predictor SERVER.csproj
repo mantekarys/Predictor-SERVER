@@ -84,6 +84,7 @@
     <Compile Include="Map\DamagePotion.cs" />
     <Compile Include="Map\DamagePowerUp.cs" />
     <Compile Include="Map\Item.cs" />
+    <Compile Include="Map\MatchBoost.cs" />
     <Compile Include="Map\PickUp.cs" />
     <Compile Include="Map\PickUpCreator.cs" />
     <Compile Include="Map\PowerUp.cs" />
