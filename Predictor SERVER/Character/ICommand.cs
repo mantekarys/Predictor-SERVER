@@ -12,8 +12,7 @@ namespace Predictor_SERVER.Character
         /// method for calling specific players character UseItem() method
         /// </summary>
         /// <param name="charecter">player's character</param>
-        /// <param name="position">Item's position in inventory</param>
-        void Execute(Class charecter, int position);
+        void Execute(Class charecter);
         /// <summary>
         /// Method for calling undo for recently activated item
         /// </summary>
