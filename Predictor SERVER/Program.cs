@@ -211,7 +211,7 @@ namespace Predictor_SERVER
                         int num = 0;
                         foreach (var player in Variables.matches[matchId].players)
                         {
-                            if (num++ == which) continue;
+                            if (num++ == which || player.playerClass.health<=0) continue;
                             var k = player.playerClass.collision(tempC, c.coordinates, c.size);
                             var diff = (tempC.Item1 - c.coordinates.Item1, tempC.Item2 - c.coordinates.Item2);
                             if (k != (-1, -1))
@@ -405,7 +405,7 @@ namespace Predictor_SERVER
 
                 foreach (var player in Variables.matches[matchId].players)
                 {
-                    if (player.playerClass == projectile.attacker) continue;
+                    if (player.playerClass == projectile.attacker || player.playerClass.health <= 0) continue;
                     var k = player.playerClass.collision(last, projectile.coordinates, projectile.size);
                     if (k != (-1, -1))
                     {

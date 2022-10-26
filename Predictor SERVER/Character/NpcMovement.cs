@@ -78,6 +78,7 @@ namespace Predictor_SERVER.Character
             }
             foreach (var player in Variables.matches[matchId].players)
             {
+                if (player.playerClass.health <= 0) continue;
                 var k = player.playerClass.collision(prev, npc.coordinates, npc.size);
                 var diff = (prev.Item1 - npc.coordinates.Item1, prev.Item2 - npc.coordinates.Item2);
                 if (k != (-1, -1))
