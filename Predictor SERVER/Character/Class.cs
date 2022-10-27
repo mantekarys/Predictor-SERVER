@@ -35,6 +35,7 @@ namespace Predictor_SERVER.Character
             //send other parameters on start or when took an upgrade
         }
         public Class() { }
+        #region PowerUps and Items
         /// <summary>
         /// Applies power up to playable character
         /// </summary>
@@ -176,6 +177,8 @@ namespace Predictor_SERVER.Character
                 }
             }
         }
+
+        #endregion PowerUps and Items
         public void move(Keys keyData, Map.Map map)//event
         {
             int pad = 5;

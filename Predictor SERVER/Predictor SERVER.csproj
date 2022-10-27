@@ -76,7 +76,9 @@
     <Compile Include="Character\RogueCreator.cs" />
     <Compile Include="Character\Tank.cs" />
     <Compile Include="Character\TankCreator.cs" />
-    <Compile Include="Character\UseItem.cs" />
+    <Compile Include="Character\UseThirdItem.cs" />
+    <Compile Include="Character\UseSecondItem.cs" />
+    <Compile Include="Character\UseFirstItem.cs" />
     <Compile Include="Map\AttackSpeedCreator.cs" />
     <Compile Include="Map\AttackSpeedPotion.cs" />
     <Compile Include="Map\AttackSpeedPowerUp.cs" />
@@ -84,6 +86,7 @@
     <Compile Include="Map\DamagePotion.cs" />
     <Compile Include="Map\DamagePowerUp.cs" />
     <Compile Include="Map\Item.cs" />
+    <Compile Include="Map\MatchBoost.cs" />
     <Compile Include="Map\PickUp.cs" />
     <Compile Include="Map\PickUpCreator.cs" />
     <Compile Include="Map\PowerUp.cs" />

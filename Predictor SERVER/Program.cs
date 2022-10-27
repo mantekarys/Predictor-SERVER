@@ -30,7 +30,11 @@ namespace Predictor_SERVER
         public static List<List<Projectile>> projectiles = new List<List<Projectile>>();
         public static List<Server.Match> matches = new List<Server.Match>();
         public static List<List<string>> matchIds = new List<List<string>>();
-        internal static UseItem useItem = new UseItem();
+        
+        internal static UseSecondItem useFirstItem = new UseSecondItem();  // command class for useage of first item
+        internal static UseSecondItem useSecondItem = new UseSecondItem();  // command class for useage of second item
+        internal static UseThirdItem useThirdItem = new UseThirdItem();  // command class for useage of third item
+        internal static MatchBoost booster = new MatchBoost(); // boost granter for loser of a match 
 
         public static List<int> moveNpc = new List<int>();
         public static List<List<Npc>> npcs = new List<List<Npc>>();
@@ -146,6 +150,17 @@ namespace Predictor_SERVER
                 {
                     Variables.matches[matchId].ready += ready;
                     Variables.matches[matchId].players.Add(new Server.Player(ClassCreator.pickCreator(text, 15, which)));
+                    if (rnd.Next(10) < 2)
+                    {
+                        if(rnd.Next(1) == 0)
+                        {
+                            Variables.booster.grantPowerUp(Variables.matches[matchId].players[Variables.matches[matchId].peopleAmount - 1].playerClass);
+                        }
+                        else
+                        {
+                            Variables.booster.grantItem(Variables.matches[matchId].players[Variables.matches[matchId].peopleAmount - 1].playerClass);
+                        }
+                    }
                     if (Variables.matches[matchId].ready == Variables.matches[matchId].peopleAmount)
                     {
                         var thread = new Thread(
@@ -286,15 +301,15 @@ namespace Predictor_SERVER
                         }
                         if (keyData == Keys.D1)
                         {
-                            Variables.useItem.Execute(c, 0);
+                            Variables.useFirstItem.Execute(c);
                         }
                         if (keyData == Keys.D2)
                         {
-                            Variables.useItem.Execute(c, 1);
+                            Variables.useSecondItem.Execute(c);
                         }
                         if (keyData == Keys.D3)
                         {
-                            Variables.useItem.Execute(c, 2);
+                            Variables.useThirdItem.Execute(c);
                         }
                         #endregion Other key read end
 
