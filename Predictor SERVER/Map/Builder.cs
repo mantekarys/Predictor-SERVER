@@ -8,11 +8,8 @@ namespace Predictor_SERVER.Map
 {
     public abstract class Builder
     {
-        //https://refactoring.guru/design-patterns/builder/csharp/example
         public abstract void addColor();
         public abstract void addSize();
-
-
-
+        public abstract void addCoordinates(int x, int y);
     }
 }
