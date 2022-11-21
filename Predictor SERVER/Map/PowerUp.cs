@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Predictor_SERVER.Character;
+using System;
 using System.Drawing;
 
 
@@ -30,6 +31,18 @@ namespace Predictor_SERVER.Map
             }
             return false;
         }
-
+        public override void pickedUp(Class character, int matchID, int i)
+        {
+            this.ApplyPickUp(character);
+            this.DeletePickUpFromVariables(matchID, i);
+        }
+        public override void ApplyPickUp(Class character)
+        {
+            character.applyPowerUp(this);
+        }
+        public override void DeletePickUpFromVariables(int matchID, int i)
+        {
+            Variables.pickables[matchID].Remove(Variables.pickables[matchID][i]);
+        }
     }
 }

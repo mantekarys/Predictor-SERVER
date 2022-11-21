@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Predictor_SERVER.Character;
 
 namespace Predictor_SERVER.Map
 {
@@ -15,10 +14,6 @@ namespace Predictor_SERVER.Map
         public SpeedPowerUp((int, int) coord)
         {
             this.coordinates = coord;
-        }
-        public override void pickedUp(Class character)
-        {
-            character.applyPowerUp(this);
         }
     }
 }

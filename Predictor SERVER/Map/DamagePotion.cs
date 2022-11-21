@@ -12,11 +12,6 @@ namespace Predictor_SERVER.Map
         public new string description = "Increases damage temporarly";
         public new DateTime experationTime = DateTime.MinValue;
         public new int remainingTime = 200;
-        public override void pickedUp(Class character)
-        {
-            character.addToInventory(this);
-        }
-
         public DamagePotion((int, int) position)
         {
             coordinates = position;

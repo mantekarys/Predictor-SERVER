@@ -12,7 +12,7 @@ namespace Predictor_SERVER.Map
         public void grantItem(Class player)
         {
             Item item = new AttackSpeedPotion((0, 0));
-            item.pickedUp(player);
+            item.ApplyPickUp(player);
         }
         /// <summary>
         /// method for creation of powerup and apllying it to player class
@@ -20,7 +20,7 @@ namespace Predictor_SERVER.Map
         public void grantPowerUp(Class player)
         {
             PowerUp powerUp = new AttackSpeedPowerUp((0,0));
-            powerUp.pickedUp(player);
+            powerUp.ApplyPickUp(player);
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Predictor_SERVER.Character;
 
 namespace Predictor_SERVER.Map
 {
@@ -12,11 +11,6 @@ namespace Predictor_SERVER.Map
         public new string description = "Increases movement speed temporarly";
         public new DateTime experationTime = DateTime.MinValue;
         public new int remainingTime = 200;
-        public override void pickedUp(Class character)
-        {
-            character.addToInventory(this);
-        }
-
         public SpeedPotion((int, int) position)
         {
             coordinates = position;

@@ -254,8 +254,7 @@ namespace Predictor_SERVER
                                 var tempPickup = Variables.pickables[matchId][i] as Item;
                                 if (tempPickup.collision(tempC, c.coordinates, c.size) && c.inventoryCheck()<3)
                                 {
-                                    c.addToInventory(tempPickup);
-                                    Variables.pickables[matchId].Remove(Variables.pickables[matchId][i]);
+                                    tempPickup.pickedUp(c, matchId, i);
                                 }
                             }
                             else if(Variables.pickables[matchId][i] is PowerUp)
@@ -263,8 +262,7 @@ namespace Predictor_SERVER
                                 var tempPickup = Variables.pickables[matchId][i] as PowerUp;
                                 if (tempPickup.collision(tempC, c.coordinates, c.size))
                                 {
-                                    c.applyPowerUp(tempPickup);
-                                    Variables.pickables[matchId].Remove(Variables.pickables[matchId][i]);
+                                    tempPickup.pickedUp(c, matchId, i);
                                 }
                             } 
                         }

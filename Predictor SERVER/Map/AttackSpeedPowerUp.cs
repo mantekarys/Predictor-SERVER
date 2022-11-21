@@ -16,9 +16,5 @@ namespace Predictor_SERVER.Map
         {
             this.coordinates = coord;
         }
-        public override void pickedUp(Class character)
-        {
-            character.applyPowerUp(this);
-        }
     }
 }

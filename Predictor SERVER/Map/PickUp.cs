@@ -15,6 +15,9 @@ namespace Predictor_SERVER.Map
         public  DateTime remainingTime { get; set; }
         public int size = 6;
         public (int, int) coordinates;
-        public abstract void pickedUp(Class @class);
+        public abstract void pickedUp(Class @class, int matchID, int i);
+        public abstract void ApplyPickUp(Class @class);
+        public abstract void DeletePickUpFromVariables(int matchID, int i);
+
     }
 }
