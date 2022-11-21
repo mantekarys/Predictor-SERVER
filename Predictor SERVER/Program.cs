@@ -4,6 +4,7 @@ using Predictor_SERVER.Map;
 using Predictor_SERVER.Server;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -71,6 +72,7 @@ namespace Predictor_SERVER
     {
         Random rnd = new Random(978);
         Logger log = Logger.getInstance();
+        CharacterFactory npcFactory = new CharacterFactory();
 
         protected override void OnMessage(MessageEventArgs e)
         {
@@ -101,7 +103,7 @@ namespace Predictor_SERVER
                 }
                 if (code == 752)//creates match
                 {
-                    log.WriteMessageWithDebug("Match created");
+                    //log.WriteMessageWithDebug("Match created");
                     matchId = Variables.matches.Count;
                     Variables.matchIds.Add(new List<string>());
                     Variables.matchIds[matchId].Add(ID);
@@ -113,30 +115,19 @@ namespace Predictor_SERVER
                     Variables.pickables.Add(new List<PickUp>() { new DamagePowerUp((350, 350)) });
                     Variables.projectiles.Add(new List<Projectile>());
 
-                    Npc n1 = new Npc(15, 5, 5, 1, 30, 30);
-                    n1.selectDeathType("item");
-                    Npc n2 = n1.deepCopy();
-                    n2.coordinates = (655, 30);
-                    n2.selectDeathType("powerUp");
-                    Npc n3 = n1.deepCopy();
-                    n3.coordinates = (30, 655);
-                    n3.selectDeathType("item");
-                    Npc n4 = n1.deepCopy();
-                    n4.coordinates = (655, 655);
-                    n4.selectDeathType("powerUp");
-                    Variables.npcs.Add(new List<Npc>() { n1, n2, n3, n4});
-
-                    GCHandle handle = GCHandle.Alloc(n1.ability, GCHandleType.WeakTrackResurrection);
-                    int address = GCHandle.ToIntPtr(handle).ToInt32();
-                    Console.WriteLine(address);
-
-                    handle = GCHandle.Alloc(n2.ability, GCHandleType.WeakTrackResurrection);
-                    address = GCHandle.ToIntPtr(handle).ToInt32();
-                    Console.WriteLine(address);
-
-                    handle = GCHandle.Alloc(n3.ability, GCHandleType.WeakTrackResurrection);
-                    address = GCHandle.ToIntPtr(handle).ToInt32();
-                    Console.WriteLine(address);
+                    //Npc n1 = new Npc(15, 5, 5, 1, 30, 30);
+                    //n1.selectDeathType("item");
+                    //Npc n2 = n1.deepCopy();
+                    //n2.coordinates = (655, 30);
+                    //n2.selectDeathType("powerUp");
+                    //Npc n3 = n1.deepCopy();
+                    //n3.coordinates = (30, 655);
+                    //n3.selectDeathType("item");
+                    //Npc n4 = n1.deepCopy();
+                    //n4.coordinates = (655, 655);
+                    //n4.selectDeathType("powerUp");
+                    Variables.npcs.Add(new List<Npc>() { (Npc)npcFactory.GetCharacter(0), (Npc)npcFactory.GetCharacter(1), 
+                        (Npc)npcFactory.GetCharacter(2), (Npc)npcFactory.GetCharacter(3) });
 
                     Variables.moveNpc.Add(0);
                     var message = JsonConvert.SerializeObject((matchId, Variables.matches[matchId].peopleAmount - 1));
@@ -144,7 +135,7 @@ namespace Predictor_SERVER
                 }
                 if (code == 876)////joined match
                 {
-                    log.WriteMessageWithDebug("Match Joined");
+                    //log.WriteMessageWithDebug("Match Joined");
                     matchId = int.Parse(text);
                     Variables.matchIds[matchId].Add(ID);
                     var message = JsonConvert.SerializeObject(Variables.matches[matchId].peopleAmount++);
@@ -346,7 +337,17 @@ namespace Predictor_SERVER
         }
         public void Broadcast(int matchId)
         {
-            BulletMovement(matchId);
+            List<int> npcsToAdd = BulletMovement(matchId);
+            foreach (int num in npcsToAdd)
+            {
+                var sw = Stopwatch.StartNew();
+                long total = GC.GetTotalMemory(true);
+                Variables.npcs[matchId].Insert(num, (Npc)npcFactory.GetCharacter(num));
+                Console.WriteLine($"Diffrence in memory after an npc was returned {GC.GetTotalMemory(true) - total}");
+                sw.Stop();
+                Console.WriteLine($"Got npc {sw.Elapsed}");
+
+            }
             if (Variables.moveNpc[matchId]++ == 4)
             {
                 NpcMovement(matchId);
@@ -391,7 +392,7 @@ namespace Predictor_SERVER
                     npc.ability.durationLeft = npc.ability.duration;
                     npc.ability.cooldownLeft = npc.ability.cooldown;
                     npc.ability.activated = true;
-                    log.WriteMessageWithDebug("Npc ability activated");
+                    //log.WriteMessageWithDebug("Npc ability activated");
                 }
             }
             else
@@ -400,15 +401,16 @@ namespace Predictor_SERVER
                 {
                     if(ability.name == "Speed")npc.speed -= 20;
                     ability.activated = false;
-                    log.WriteMessageWithDebug("Npc ability deactivated");
+                    //log.WriteMessageWithDebug("Npc ability deactivated");
                 }
             }
             npc.ability = ability;
 
         }
         
-        private static void BulletMovement(int matchId)
+        private static List<int> BulletMovement(int matchId)
         {
+            var toRemoveNpc = new List<int>();
             foreach (var projectile in Variables.projectiles[matchId].ToList())
             {
                 if (projectile == null) continue;
@@ -448,9 +450,13 @@ namespace Predictor_SERVER
                 //{
                 //    Variables.matches[matchId].players.Remove(player);
                 //}
-                var toRemoveNpc = new List<Npc>();
+                int index = 0;
                 foreach (var npc in Variables.npcs[matchId])
                 {
+                    if (toRemoveNpc.Contains(index))
+                    {
+                        continue;
+                    }
                     var k = npc.collision(last, projectile.coordinates, projectile.size);
                     if (k != (-1, -1))
                     {
@@ -458,17 +464,13 @@ namespace Predictor_SERVER
                         {
                             if (npc.takeDamage(projectile.attacker.damage))
                             {
-                                toRemoveNpc.Add(npc);
+                                toRemoveNpc.Add(index);
                             }
                             Variables.projectiles[matchId].Remove(projectile);
                         }
                         catch (Exception) { }
                     }
-                }
-                foreach (var npc in toRemoveNpc)
-                {
-                    Variables.npcs[matchId].Remove(npc);
-                    Variables.pickables[matchId].Add(npc.OnDeath());
+                    index++;
                 }
                 foreach (var obs in Variables.obstacles[matchId])
                 {
@@ -483,6 +485,13 @@ namespace Predictor_SERVER
                     }
                 }
             }
+            foreach (int num in toRemoveNpc)
+            {
+                var npc = Variables.npcs[matchId][num];
+                Variables.npcs[matchId].Remove(npc);
+                Variables.pickables[matchId].Add(npc.OnDeath());
+            }
+            return toRemoveNpc;
         }
     }
     class Program

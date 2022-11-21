@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Predictor_SERVER.Character
 {
-    public abstract class Character
+    public abstract class Character : IPrototype
     {
         public int size;
         public int speed;
@@ -54,6 +54,17 @@ namespace Predictor_SERVER.Character
                 }
             }
             return (-1, -1);
+        }
+
+        public Character shallowCopy()
+        {
+            return (Character)this.MemberwiseClone();
+        }
+        public Character deepCopy()
+        {
+            Character clone = (Character)this.MemberwiseClone();
+            clone.ability = new Ability(100, "Makes character faster", 50, "Speed");
+            return clone;
         }
     }
 }

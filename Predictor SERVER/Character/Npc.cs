@@ -8,7 +8,7 @@ using Predictor_SERVER.Map;
 
 namespace Predictor_SERVER.Character
 {
-    public class Npc : Character, IPrototype
+    public class Npc : Character
     {
         Dictionary<string, NpcMovement> movementTypes = new Dictionary<string, NpcMovement>();
         Dictionary<string, NpcDeath> deathTypes = new Dictionary<string, NpcDeath>();

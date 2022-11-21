@@ -63,6 +63,7 @@
     <Compile Include="Character\NpcDeathItemType.cs" />
     <Compile Include="Character\NpcDeathPowerUpType.cs" />
     <Compile Include="Character\NpcDeath.cs" />
+    <Compile Include="Character\CharacterFactory.cs" />
     <Compile Include="Character\NpcMovement.cs" />
     <Compile Include="Character\IPrototype.cs" />
     <Compile Include="Character\ICommand.cs" />

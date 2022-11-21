@@ -8,9 +8,9 @@ namespace Predictor_SERVER.Character
 {
     internal interface IPrototype
     {
-        Npc shallowCopy();
+        Character shallowCopy();
 
-        Npc deepCopy();
+        Character deepCopy();
 
     }
 }
