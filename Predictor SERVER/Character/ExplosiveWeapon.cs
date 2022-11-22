@@ -15,7 +15,7 @@ namespace Predictor_SERVER.Character
         }
         public override Projectile attack(Class attacker, int direction)
         {
-            return new Projectile(10, 12, attacker.coordinates, direction, attacker);
+            return new ProjectileComposite(10, 12, attacker.coordinates, direction, attacker,3,2);
         }
     }
 }

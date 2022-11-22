@@ -357,9 +357,15 @@ namespace Predictor_SERVER
             {
                 player.playerClass.activeItemTimeExperationCheck();
             }
+            List<ProjectileLeaf> projList = new List<ProjectileLeaf>();
+            foreach (var proj in Variables.projectiles[matchId])
+            {
+                projList.AddRange(proj.getList());
+            }
             var message = JsonConvert.SerializeObject((Variables.matches[matchId].players.ToList(), Variables.map,
-                Variables.pickables[matchId].ToList(), Variables.projectiles[matchId].ToList(), Variables.traps[matchId].ToList(),
+                Variables.pickables[matchId].ToList(), projList, Variables.traps[matchId].ToList(),
                 Variables.obstacles[matchId].ToList(), Variables.npcs[matchId].ToList()));
+            
             foreach (var item in Variables.matchIds[matchId])
             {
                 Sessions.SendTo(message, item);

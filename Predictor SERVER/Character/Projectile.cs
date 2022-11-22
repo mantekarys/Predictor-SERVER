@@ -7,21 +7,22 @@ using System.Threading.Tasks;
 
 namespace Predictor_SERVER.Character
 {
-    public class Projectile
+    public abstract class Projectile
     {
         public int speed;
         public int size;
         public (int, int) coordinates;
         public int direction;
         public Class attacker;
-        public Projectile(int speed, int size, (int, int) coordinates, int direction, Class attacker)
-        {
-            this.speed = speed;
-            this.size = size;
-            this.coordinates = coordinates;
-            this.direction = direction;
-            this.attacker = attacker;
-        }
+        public bool hit = false;
+        //public Projectile(int speed, int size, (int, int) coordinates, int direction, Class attacker)
+        //{
+        //    this.speed = speed;
+        //    this.size = size;
+        //    this.coordinates = coordinates;
+        //    this.direction = direction;
+        //    this.attacker = attacker;
+        //}
         public (int,int) move()
         {
             switch (direction)
@@ -41,6 +42,6 @@ namespace Predictor_SERVER.Character
             }
             return coordinates;
         }
-
+        public abstract List<ProjectileLeaf> getList();
     }
 }
