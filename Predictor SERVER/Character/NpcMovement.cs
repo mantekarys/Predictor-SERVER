@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Predictor_SERVER.Map;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,7 +61,10 @@ namespace Predictor_SERVER.Character
                     npc.coordinates.Item2 = mSize - npc.size + pad;
                 }
             }
-            foreach (var obs in Variables.obstacles[matchId])
+
+            Iterator iterator = Variables.obstacles[matchId].CreateIterator();
+            var obs = (Obstacle)iterator.First();
+            while (obs != null)
             {
                 var k = obs.collision(prev, npc.coordinates, npc.size);
                 var diff = (prev.Item1 - npc.coordinates.Item1, prev.Item2 - npc.coordinates.Item2);
@@ -75,6 +79,7 @@ namespace Predictor_SERVER.Character
                         npc.coordinates.Item1 = k.Item1;
                     }
                 }
+                obs = (Obstacle)iterator.Next();
             }
             foreach (var player in Variables.matches[matchId].players)
             {

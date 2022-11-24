@@ -17,8 +17,24 @@ namespace Predictor_SERVER.Map
             destructable = true;
         }
 
-        public void takeDamage()
+        public void takeDamage(int damage)
         {
+            if (destructable)
+            {
+                health -= damage;
+            }
+        }
+
+        public bool IsDestryed()
+        {
+            if (health <= 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public (int, int) collision((int, int) prev, (int, int) curr, int size)
