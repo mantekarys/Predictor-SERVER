@@ -42,6 +42,7 @@ namespace Predictor_SERVER.Character
             }
             return coordinates;
         }
-        public abstract List<ProjectileLeaf> getList();
+        public abstract List<ProjectileLeaf> getNotHitList();
+        public abstract bool existsNotHit();
     }
 }

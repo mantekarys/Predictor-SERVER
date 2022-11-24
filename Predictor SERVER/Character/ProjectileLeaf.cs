@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,11 +18,18 @@ namespace Predictor_SERVER.Character
             this.attacker = attacker;
         }
 
-        public override List<ProjectileLeaf> getList()
+        public override List<ProjectileLeaf> getNotHitList()
         {
             List<ProjectileLeaf> list = new List<ProjectileLeaf>();
-            list.Add(this);
+            if (hit == false)
+            {
+                list.Add(new ProjectileLeaf(speed, size, coordinates, direction, attacker));
+            }
             return list;
+        }
+        public override bool existsNotHit()
+        {
+            return !hit;
         }
     }
 }

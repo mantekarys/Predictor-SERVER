@@ -74,15 +74,34 @@ namespace Predictor_SERVER.Character
             if(index < 0 || index >= children.Count) { return null; }
             return children[index];
         }
-        public override List<ProjectileLeaf> getList()
+        public override List<ProjectileLeaf> getNotHitList()
         {
             List<ProjectileLeaf> list = new List<ProjectileLeaf>();
-            list.Add(new ProjectileLeaf(speed, size, coordinates, direction, attacker));
+            if(!hit)
+            {
+                list.Add(new ProjectileLeaf(speed, size, coordinates, direction, attacker));
+            }
             foreach (Projectile item in children)
             {
-                list.AddRange(item.getList());
+                list.AddRange(item.getNotHitList());
             }
             return list;
+        }
+
+        public override bool existsNotHit()
+        {
+            if (!hit)
+            {
+                return true;
+            }
+            foreach (var child in children)
+            {
+                if (child.existsNotHit())
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
