@@ -245,7 +245,6 @@ namespace Predictor_SERVER
                                 }
                             }
                         }
-
                         Iterator PickUpIterator = Variables.pickables[matchId].CreateIterator();
                         var pickUp = PickUpIterator.First();
                         while (pickUp != null)// checks whether a pickup has been touched and adds it to respected player
@@ -258,7 +257,7 @@ namespace Predictor_SERVER
                                     Console.WriteLine("PickedUp Item");
                                     //c.addToInventory(tempPickup);
                                     //Variables.pickables[matchId].RemoveItemAt(PickUpIterator.GetCurrentIndex());
-                                    tempPickup.pickedUp(c, matchId, i);
+                                    tempPickup.pickedUp(c, matchId, PickUpIterator);
                                 }
                             }
                             else if(pickUp is PowerUp)
@@ -269,7 +268,7 @@ namespace Predictor_SERVER
                                     Console.WriteLine("PickedUp PowerUp");
                                     //c.applyPowerUp(tempPickup);
                                     //Variables.pickables[matchId].RemoveItemAt(PickUpIterator.GetCurrentIndex());
-                                    tempPickup.pickedUp(c, matchId, i);
+                                    tempPickup.pickedUp(c, matchId, PickUpIterator);
                                 }
                             } 
                             pickUp = PickUpIterator.Next();
