@@ -13,11 +13,6 @@ namespace Predictor_SERVER.Map
         public new DateTime experationTime = DateTime.MinValue;
         public new int remainingTime = 200;
 
-        public override void pickedUp(Class character)
-        {
-            character.addToInventory(this);
-        }
-
         public AttackSpeedPotion((int,int) position)
         {
             coordinates = position;

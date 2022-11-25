@@ -31,6 +31,18 @@ namespace Predictor_SERVER.Map
             }
             return false;
         }
-
+        public override void pickedUp(Class character,int matchID, int i)
+        {
+            this.ApplyPickUp(character);
+            this.DeletePickUpFromVariables(matchID, i);
+        }
+        public override void ApplyPickUp(Class character)
+        {
+            character.addToInventory(this);
+        }
+        public override void DeletePickUpFromVariables(int matchID, int i)
+        {
+            Variables.pickables[matchID].Remove(Variables.pickables[matchID][i]);
+        }
     }
 }
