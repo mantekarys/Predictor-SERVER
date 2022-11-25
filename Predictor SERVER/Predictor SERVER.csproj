@@ -80,6 +80,14 @@
     <Compile Include="Character\UseThirdItem.cs" />
     <Compile Include="Character\UseSecondItem.cs" />
     <Compile Include="Character\UseFirstItem.cs" />
+    <Compile Include="Map\PickUpIterator.cs" />
+    <Compile Include="Map\PickUpAggregate.cs" />
+    <Compile Include="Map\TrapIterator.cs" />
+    <Compile Include="Map\TrapAggregate.cs" />
+    <Compile Include="Map\ObstacleIterator.cs" />
+    <Compile Include="Map\Iterator.cs" />
+    <Compile Include="Map\ObstacleAggregate.cs" />
+    <Compile Include="Map\Aggregate.cs" />
     <Compile Include="Map\AttackSpeedCreator.cs" />
     <Compile Include="Map\AttackSpeedPotion.cs" />
     <Compile Include="Map\AttackSpeedPowerUp.cs" />

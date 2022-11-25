@@ -22,13 +22,13 @@ namespace Predictor_SERVER
     public static class Variables
     {
         public static List<MapObject> mapO = new List<MapObject>();
-        public static List<List<Trap>> traps = new List<List<Trap>>();
-        public static List<List<Obstacle>> obstacles = new List<List<Obstacle>>();
+        public static List<TrapAggregate> traps = new List<TrapAggregate>();
+        public static List<ObstacleAggregate> obstacles = new List<ObstacleAggregate>();
         public static Map.Map map = new Map.Map("Map1", mapO);
         public static int howMany = 0;
         public static WebSocketSessionManager sesions;
         public static bool started = false;
-        public static List<List<PickUp>> pickables = new List<List<PickUp>>();
+        public static List<PickUpAggregate> pickables = new List<PickUpAggregate>();
         public static List<List<Projectile>> projectiles = new List<List<Projectile>>();
         public static List<Server.Match> matches = new List<Server.Match>();
         public static List<List<string>> matchIds = new List<List<string>>();
@@ -41,29 +41,29 @@ namespace Predictor_SERVER
         public static List<int> moveNpc = new List<int>();
         public static List<List<Npc>> npcs = new List<List<Npc>>();
 
-        public static List<Obstacle> createObstacles()
+        public static ObstacleAggregate createObstacles()
         {
-            List<Obstacle> matchObstacles = new List<Obstacle>();
+            ObstacleAggregate matchObstacles = new ObstacleAggregate();
             var builder = new ObstacleBuilder();
             Random rnd = new Random(645);
             int obsCount = rnd.Next(1, 20);
             for (int i = 0; i < obsCount; i++)
             {
                 builder.build(rnd.Next(5, 685), rnd.Next(5, 685));
-                matchObstacles.Add(builder.GetObstacle());
+                matchObstacles[i] = builder.GetObstacle();
             }
             return matchObstacles;
         }
-        public static List<Trap> createTraps()
+        public static TrapAggregate createTraps()
         {
-            List<Trap> matchTraps = new List<Trap>();
+            TrapAggregate matchTraps = new TrapAggregate();
             var builder = new TrapBuilder();
             Random rnd = new Random(552);
             int trapCount = rnd.Next(5, 16);
             for (int i = 0; i < trapCount; i++)
             {
                 builder.build(rnd.Next(5, 695), rnd.Next(5, 695));
-                matchTraps.Add(builder.GetTrap());
+                matchTraps[i] = builder.GetTrap();
             }
             return matchTraps;
         }
@@ -108,11 +108,12 @@ namespace Predictor_SERVER
                     Variables.matchIds.Add(new List<string>());
                     Variables.matchIds[matchId].Add(ID);
                     Variables.matches.Add(new Server.Match(matchId, text));
-                    Variables.traps.Add(new List<Trap>());
-                    Variables.obstacles.Add(new List<Obstacle>());
+                    Variables.traps.Add(new TrapAggregate());
+                    Variables.obstacles.Add(new ObstacleAggregate());
                     Variables.traps[matchId] = Variables.createTraps();
                     Variables.obstacles[matchId] = Variables.createObstacles();
-                    Variables.pickables.Add(new List<PickUp>() { new DamagePowerUp((350, 350)) });
+                    Variables.pickables.Add(new PickUpAggregate());
+                    Variables.pickables[matchId][0] = new DamagePowerUp((350, 350));
                     Variables.projectiles.Add(new List<Projectile>());
 
                     //Npc n1 = new Npc(15, 5, 5, 1, 30, 30);
@@ -168,15 +169,17 @@ namespace Predictor_SERVER
                 if (code == -1)////game movement
                 {
                     var c = Variables.matches[matchId].players[which].playerClass;
-                    var obstacles = Variables.obstacles[matchId];
-                    var pickups = Variables.pickables[matchId];
+                    //var obstacles = Variables.obstacles[matchId];
+                    //var pickups = Variables.pickables[matchId];
                     //int pad = 5;
                     foreach (var keyData in keys)
                     {
                         c.move(keyData, map);
                         var tempC = c.coordinates;
                         #region collision calc
-                        foreach (var obs in obstacles)
+                        Iterator ObsIterator = Variables.obstacles[matchId].CreateIterator();
+                        var obs = (Obstacle)ObsIterator.First();
+                        while(obs != null)
                         {
                             var k = obs.collision(tempC, c.coordinates, c.size);
                             var diff = (tempC.Item1 - c.coordinates.Item1, tempC.Item2 - c.coordinates.Item2);
@@ -191,7 +194,9 @@ namespace Predictor_SERVER
                                     c.coordinates.Item1 = k.Item1;
                                 }
                             }
+                            obs = (Obstacle)ObsIterator.Next();
                         }
+
                         foreach (var npc in Variables.npcs[matchId])
                         {
                             var k = npc.collision(tempC, c.coordinates, c.size);
@@ -210,14 +215,18 @@ namespace Predictor_SERVER
                             }
                         }
 
-                        for (int i = 0; i < Variables.traps[matchId].Count; i++)
+                        Iterator TrapIterator = Variables.traps[matchId].CreateIterator();
+                        var trap = (Trap)TrapIterator.First();
+                        while (trap != null)
                         {
-                            if (Variables.traps[matchId][i].collision(tempC, c.coordinates, c.size))
+                            if (trap.collision(tempC, c.coordinates, c.size))
                             {
-                                c.takeDamage(Variables.traps[matchId][i].damage);
-                                Variables.traps[matchId].RemoveAt(i);
+                                c.takeDamage(trap.damage);
+                                Variables.traps[matchId].RemoveItemAt(TrapIterator.GetCurrentIndex());
                             }
+                            trap = (Trap)TrapIterator.Next();
                         }
+
                         int num = 0;
                         foreach (var player in Variables.matches[matchId].players)
                         {
@@ -237,25 +246,33 @@ namespace Predictor_SERVER
                             }
                         }
 
-                        for(int i =0; i< Variables.pickables[matchId].Count;i++)// checks whether a pickup has been touched and adds it to respected player
-                        {
-                            
-                            if(Variables.pickables[matchId][i] is Item)
-                            {
-                                var tempPickup = Variables.pickables[matchId][i] as Item;
+                        Iterator PickUpIterator = Variables.pickables[matchId].CreateIterator();
+                        var pickUp = PickUpIterator.First();
+                        while (pickUp != null)// checks whether a pickup has been touched and adds it to respected player
+                        { 
+                            if(pickUp is Item)
+                            { 
+                                var tempPickup = pickUp as Item;
                                 if (tempPickup.collision(tempC, c.coordinates, c.size) && c.inventoryCheck()<3)
                                 {
+                                    Console.WriteLine("PickedUp Item");
+                                    //c.addToInventory(tempPickup);
+                                    //Variables.pickables[matchId].RemoveItemAt(PickUpIterator.GetCurrentIndex());
                                     tempPickup.pickedUp(c, matchId, i);
                                 }
                             }
-                            else if(Variables.pickables[matchId][i] is PowerUp)
+                            else if(pickUp is PowerUp)
                             {
-                                var tempPickup = Variables.pickables[matchId][i] as PowerUp;
+                                var tempPickup = pickUp as PowerUp;
                                 if (tempPickup.collision(tempC, c.coordinates, c.size))
                                 {
+                                    Console.WriteLine("PickedUp PowerUp");
+                                    //c.applyPowerUp(tempPickup);
+                                    //Variables.pickables[matchId].RemoveItemAt(PickUpIterator.GetCurrentIndex());
                                     tempPickup.pickedUp(c, matchId, i);
                                 }
                             } 
+                            pickUp = PickUpIterator.Next();
                         }
                         #endregion collision calc
                         #region Other key read
@@ -356,8 +373,8 @@ namespace Predictor_SERVER
                 player.playerClass.activeItemTimeExperationCheck();
             }
             var message = JsonConvert.SerializeObject((Variables.matches[matchId].players.ToList(), Variables.map,
-                Variables.pickables[matchId].ToList(), Variables.projectiles[matchId].ToList(), Variables.traps[matchId].ToList(),
-                Variables.obstacles[matchId].ToList(), Variables.npcs[matchId].ToList()));
+                Variables.pickables[matchId].GetList().ToList(), Variables.projectiles[matchId].ToList(), Variables.traps[matchId].GetList().ToList(),
+                Variables.obstacles[matchId].GetList().ToList(), Variables.npcs[matchId].ToList()));
             foreach (var item in Variables.matchIds[matchId])
             {
                 Sessions.SendTo(message, item);
@@ -470,24 +487,32 @@ namespace Predictor_SERVER
                     }
                     index++;
                 }
-                foreach (var obs in Variables.obstacles[matchId])
+                Iterator ObsIterator = Variables.obstacles[matchId].CreateIterator();
+                var obs = (Obstacle)ObsIterator.First();
+                while (obs != null)
                 {
                     var k = obs.collision(last, projectile.coordinates, projectile.size);
                     if (k != (-1, -1))
                     {
                         try
                         {
+                            obs.takeDamage(projectile.attacker.damage);
+                            if (obs.IsDestryed())
+                            {
+                                Variables.obstacles[matchId].RemoveItemAt(ObsIterator.GetCurrentIndex());
+                            }
                             Variables.projectiles[matchId].Remove(projectile);
                         }
                         catch (Exception) { }
                     }
+                    obs = (Obstacle)ObsIterator.Next();
                 }
             }
             foreach (int num in toRemoveNpc)
             {
                 var npc = Variables.npcs[matchId][num];
                 Variables.npcs[matchId].Remove(npc);
-                Variables.pickables[matchId].Add(npc.OnDeath());
+                Variables.pickables[matchId][Variables.pickables[matchId].Count] = npc.OnDeath();
             }
             return toRemoveNpc;
         }
