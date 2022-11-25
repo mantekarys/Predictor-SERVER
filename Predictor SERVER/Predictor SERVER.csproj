@@ -73,6 +73,8 @@
     <Compile Include="Character\NpcRandomType.cs" />
     <Compile Include="Character\Projectile.cs" />
     <Compile Include="Character\Npc.cs" />
+    <Compile Include="Character\ProjectileComposite.cs" />
+    <Compile Include="Character\ProjectileLeaf.cs" />
     <Compile Include="Character\Rogue.cs" />
     <Compile Include="Character\RogueCreator.cs" />
     <Compile Include="Character\Tank.cs" />
