@@ -31,11 +31,11 @@ namespace Predictor_SERVER.Map
             }
             return false;
         }
-        public override void pickedUp(Class character,int matchID, Iterator PickUpIterator)
-        {
-            this.ApplyPickUp(character);
-            this.DeletePickUpFromVariables(matchID, PickUpIterator);
-        }
+        //public override void pickedUp(Class character,int matchID, Iterator PickUpIterator)
+        //{
+        //    this.ApplyPickUp(character);
+        //    this.DeletePickUpFromVariables(matchID, PickUpIterator);
+        //}
         public override void ApplyPickUp(Class character)
         {
             character.addToInventory(this);

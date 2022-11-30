@@ -384,8 +384,8 @@ namespace Predictor_SERVER
                 projList.AddRange(proj.getNotHitList());
             }
             var message = JsonConvert.SerializeObject((Variables.matches[matchId].players.ToList(), Variables.map,
-                Variables.pickables[matchId].ToList(), projList, Variables.traps[matchId].ToList(),
-                Variables.obstacles[matchId].ToList(), Variables.npcs[matchId].ToList()));
+                Variables.pickables[matchId].GetList().ToList(), projList, Variables.traps[matchId].GetList().ToList(),
+                Variables.obstacles[matchId].GetList().ToList(), Variables.npcs[matchId].ToList()));
             
             foreach (var item in Variables.matchIds[matchId])
             {
@@ -440,17 +440,17 @@ namespace Predictor_SERVER
             var toRemoveNpc = new List<int>();
             foreach (var projectile in Variables.projectiles[matchId].ToList())
             {
-                BulletCalculation(projectile, matchId, toRemoveNpc);
+                toRemoveNpc = BulletCalculation(projectile, matchId, toRemoveNpc);
             }
             foreach (int num in toRemoveNpc)
             {
                 var npc = Variables.npcs[matchId][num];
                 Variables.npcs[matchId].Remove(npc);
-                Variables.pickables[matchId].Add(npc.OnDeath());
+                Variables.pickables[matchId][Variables.pickables[matchId].Count] = npc.OnDeath();
             }
             return toRemoveNpc;
         }
-        public static void BulletCalculation(Projectile projectile, int matchId, List<int> toRemoveNpc)
+        public static List<int> BulletCalculation(Projectile projectile, int matchId, List<int> toRemoveNpc)
         {
             RectangleF r = new Rectangle();
             var last = projectile.coordinates;
@@ -478,12 +478,9 @@ namespace Predictor_SERVER
                         catch (Exception) { }
                     }
                 }
-            //foreach (var player in toRemovePlayer)
-            //{
-            //    Variables.matches[matchId].players.Remove(player);
-            //}
             int index = 0;
-            if (!projectile.hit) 
+            if (!projectile.hit)
+            {
                 foreach (var npc in Variables.npcs[matchId])
                 {
                     if (toRemoveNpc.Contains(index))
@@ -510,44 +507,49 @@ namespace Predictor_SERVER
                 var obs = (Obstacle)ObsIterator.First();
                 if (!projectile.hit)
                 {
-
-                }
-                while (obs != null)
-                {
-                    var k = obs.collision(last, projectile.coordinates, projectile.size);
-                    if (k != (-1, -1))
+                    while (obs != null)
                     {
-                        try
+                        var k = obs.collision(last, projectile.coordinates, projectile.size);
+                        if (k != (-1, -1))
                         {
-                            obs.takeDamage(projectile.attacker.damage);
-                            if (obs.IsDestryed())
+                            try
                             {
-                                Variables.obstacles[matchId].RemoveItemAt(ObsIterator.GetCurrentIndex());
+                                projectile.hit = true;
+                                obs.takeDamage(projectile.attacker.damage);
+                                if (obs.IsDestryed())
+                                {
+                                    Variables.obstacles[matchId].RemoveItemAt(ObsIterator.GetCurrentIndex());
+                                }
+                                Variables.projectiles[matchId].Remove(projectile);
                             }
-                            Variables.projectiles[matchId].Remove(projectile);
+                            catch (Exception) { }
+                            break;
                         }
-                        catch (Exception) { }
+                        obs = (Obstacle)ObsIterator.Next();
                     }
-                    obs = (Obstacle)ObsIterator.Next();
                 }
             }
-            foreach (int num in toRemoveNpc)
-            {
-                var npc = Variables.npcs[matchId][num];
-                Variables.npcs[matchId].Remove(npc);
-                Variables.pickables[matchId][Variables.pickables[matchId].Count] = npc.OnDeath();
-                        projectile.hit = true;
-                        break;
-                    }
-                }
+
+
+            
+            //foreach (int num in toRemoveNpc)
+            //{
+            //    var npc = Variables.npcs[matchId][num];
+            //    Variables.npcs[matchId].Remove(npc);
+            //    Variables.pickables[matchId][Variables.pickables[matchId].Count] = npc.OnDeath();
+            //            projectile.hit = true;
+            //            break;
+            //}
+                
             if (projectile is ProjectileComposite)
             {
                 ProjectileComposite comp = (ProjectileComposite)projectile;
                 foreach (var proj in comp.children)
                 {
-                    BulletCalculation(proj, matchId, toRemoveNpc);
+                    toRemoveNpc = BulletCalculation(proj, matchId, toRemoveNpc);
                 }
             }
+            return toRemoveNpc;
         }
     }
     class Program
