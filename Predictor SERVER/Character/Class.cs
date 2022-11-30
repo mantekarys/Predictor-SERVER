@@ -85,28 +85,30 @@ namespace Predictor_SERVER.Character
         /// </summary>
         public void useItem(int position)
         {
-            if (inventory[position] != null)
-            {
-                Item tempItem = inventory[position];
-                tempItem.remainingTime = DateTime.Now.AddSeconds(tempItem.experationTime);
-                this.activeItems.Add(tempItem);
-                inventory.RemoveAt(position);
-                switch (tempItem.GetType().Name)
+            if (this.inventoryCheck()>0) {
+                if (inventory[position] != null)
                 {
-                    case "SpeedPotion":
-                        this.speed += 50;
-                        break;
-                    case "DamagePotion":
-                        this.damage += 50;
-                        break;
-                 case "AttackSpeedPotion":
-                        this.weapon.attackSpeed = (int)(this.weapon.attackSpeed * 0.8);
-                        if (this.weapon.attackSpeed < 1) this.weapon.attackSpeed = 1;
-                        break;
+                    Item tempItem = inventory[position];
+                    tempItem.remainingTime = DateTime.Now.AddSeconds(tempItem.experationTime);
+                    this.activeItems.Add(tempItem);
+                    inventory.RemoveAt(position);
+                    switch (tempItem.GetType().Name)
+                    {
+                        case "SpeedPotion":
+                            this.speed += 50;
+                            break;
+                        case "DamagePotion":
+                            this.damage += 50;
+                            break;
+                        case "AttackSpeedPotion":
+                            this.weapon.attackSpeed = (int)(this.weapon.attackSpeed * 0.8);
+                            if (this.weapon.attackSpeed < 1) this.weapon.attackSpeed = 1;
+                            break;
 
-                    default:
-                        break;
+                        default:
+                            break;
 
+                    }
                 }
             }
         }

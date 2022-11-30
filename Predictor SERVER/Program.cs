@@ -33,7 +33,7 @@ namespace Predictor_SERVER
         public static List<Server.Match> matches = new List<Server.Match>();
         public static List<List<string>> matchIds = new List<List<string>>();
         
-        internal static UseSecondItem useFirstItem = new UseSecondItem();  // command class for useage of first item
+        internal static UseFirstItem useFirstItem = new UseFirstItem();  // command class for useage of first item
         internal static UseSecondItem useSecondItem = new UseSecondItem();  // command class for useage of second item
         internal static UseThirdItem useThirdItem = new UseThirdItem();  // command class for useage of third item
         internal static MatchBoost booster = new MatchBoost(); // boost granter for loser of a match 
