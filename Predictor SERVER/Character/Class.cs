@@ -42,7 +42,6 @@ namespace Predictor_SERVER.Character
         /// <param name="powerUp">Provided will be children of PowerUP class</param>
         public void applyPowerUp(PowerUp powerUp)
         {
-            Console.WriteLine("Current damage {0}",this.damage);
             if(this.upgrades.ContainsKey(powerUp.GetType().Name))
             {
                 int value = this.upgrades[powerUp.GetType().ToString()];
@@ -69,7 +68,6 @@ namespace Predictor_SERVER.Character
                 default:
                     break;
             }
-            Console.WriteLine("After damage {0}", this.damage);
 
         }
         /// <summary>
@@ -98,7 +96,9 @@ namespace Predictor_SERVER.Character
                             this.speed += 50;
                             break;
                         case "DamagePotion":
+                            Console.WriteLine("Current damage {0}", this.damage);
                             this.damage += 50;
+                            Console.WriteLine("After damage {0}", this.damage);
                             break;
                         case "AttackSpeedPotion":
                             this.weapon.attackSpeed = (int)(this.weapon.attackSpeed * 0.8);

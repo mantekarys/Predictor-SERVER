@@ -113,7 +113,7 @@ namespace Predictor_SERVER
                     Variables.traps[matchId] = Variables.createTraps();
                     Variables.obstacles[matchId] = Variables.createObstacles();
                     Variables.pickables.Add(new PickUpAggregate());
-                    Variables.pickables[matchId][0] = new DamagePowerUp((350, 350));
+                    Variables.pickables[matchId][0] = new DamagePotion((350, 350));
                     Variables.projectiles.Add(new List<Projectile>());
 
                     //Npc n1 = new Npc(15, 5, 5, 1, 30, 30);
