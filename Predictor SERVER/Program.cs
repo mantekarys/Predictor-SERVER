@@ -576,8 +576,10 @@ namespace Predictor_SERVER
             wssv.Start();
             Console.WriteLine("WS server started on ws://127.0.0.1:7890/Echo");
 
-            Console.ReadKey();
-            wssv.Stop();
+            while (true)
+            {
+                Console.ReadKey();
+            }
         }
     }
 }

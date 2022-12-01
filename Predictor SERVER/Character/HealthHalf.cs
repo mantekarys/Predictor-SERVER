@@ -16,8 +16,6 @@ namespace Predictor_SERVER.Character
         public HealthHalf(HealthState state)
         {
             this.baseHealth = state.baseHealth;
-            this.speedMultiplier = state.speedMultiplier;
-            this.damageMultiplier = state.damageMultiplier;
             Initialize();
         }
         private void Initialize()
