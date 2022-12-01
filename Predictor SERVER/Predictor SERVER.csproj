@@ -113,7 +113,12 @@
     <Compile Include="Map\ObstacleBuilder.cs" />
     <Compile Include="Map\TrapBuilder.cs" />
     <Compile Include="Server\Adapter.cs" />
+    <Compile Include="Server\JoinLoggerHandler.cs" />
+    <Compile Include="Server\ReadyLoggerHandler.cs" />
+    <Compile Include="Server\MoveLoggerHandler.cs" />
+    <Compile Include="Server\CreateLoggerHandler.cs" />
     <Compile Include="Server\ITarget.cs" />
+    <Compile Include="Server\LoggerHandler.cs" />
     <Compile Include="Server\Logger.cs" />
     <Compile Include="Server\Player.cs" />
     <Compile Include="Program.cs" />

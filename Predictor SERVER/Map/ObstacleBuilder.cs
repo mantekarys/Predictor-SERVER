@@ -38,7 +38,7 @@ namespace Predictor_SERVER.Map
 
         public void addHealth()
         {
-            this.obstacle.health = 5;
+            this.obstacle.health = 50;
         }
 
         public override void addCoordinates(int x, int y)

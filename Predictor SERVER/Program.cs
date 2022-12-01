@@ -72,10 +72,22 @@ namespace Predictor_SERVER
     {
         Random rnd = new Random(978);
         Logger log = Logger.getInstance();
+
+        LoggerHandler l1 = new CreateLoggerHandler();
+        LoggerHandler l2 = new JoinLoggerHandler();
+        LoggerHandler l3 = new ReadyLoggerHandler();
+        LoggerHandler l4 = new MoveLoggerHandler();
+
+
         CharacterFactory npcFactory = new CharacterFactory();
 
         protected override void OnMessage(MessageEventArgs e)
         {
+
+            l1.SetSuccessor(l2);
+            l2.SetSuccessor(l3);
+            l3.SetSuccessor(l4);
+
             if (e.Data.Length > 3)
             {
                 int which = -1;
@@ -93,7 +105,7 @@ namespace Predictor_SERVER
                 {
                     (code, text) = JsonConvert.DeserializeObject<(int, string)>(e.Data);
                 }
-                else if (count == 5)//redies up
+                else if (count == 5)//readies up
                 {
                     (code, matchId, text, ready, which) = JsonConvert.DeserializeObject<(int, int, string, int, int)>(e.Data);
                 }
@@ -101,6 +113,9 @@ namespace Predictor_SERVER
                 {
                     (keys, mouse, which, matchId) = JsonConvert.DeserializeObject<(HashSet<Keys>, (int, int), int, int)>(e.Data);
                 }
+
+                l1.HandleLog(code, keys);
+
                 if (code == 752)//creates match
                 {
                     //log.WriteMessageWithDebug("Match created");
