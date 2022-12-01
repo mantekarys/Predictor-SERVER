@@ -45,13 +45,13 @@ namespace Predictor_SERVER.Character
             Console.WriteLine("Current damage {0}",this.damage);
             if(this.upgrades.ContainsKey(powerUp.GetType().Name))
             {
-                int value = this.upgrades[powerUp.GetType().ToString()];
-                value = this.upgrades[powerUp.GetType().ToString()] +1;
-                this.upgrades[powerUp.GetType().ToString()]=value;
+                int value = this.upgrades[powerUp.GetType().Name];
+                value = this.upgrades[powerUp.GetType().Name] +1;
+                this.upgrades[powerUp.GetType().Name]=value;
             }
             else
             {
-                this.upgrades.Add(powerUp.GetType().ToString(), 1); 
+                this.upgrades.Add(powerUp.GetType().Name, 1); 
             }
             switch (powerUp.GetType().Name)
             {
