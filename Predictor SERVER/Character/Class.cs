@@ -19,7 +19,9 @@ namespace Predictor_SERVER.Character
         private List<Item> activeItems = new List<Item>();
         private Dictionary<string, int> upgrades = new Dictionary<string, int>();
         public WeaponAlgorithm weapon;
-        public DateTime lastAttack; 
+        public DateTime lastAttack;
+        public HealthState state;
+      
         class Message
         {
             List<string> buttons;
@@ -33,6 +35,7 @@ namespace Predictor_SERVER.Character
             this.coordinates = (x, y);
             lastAttack = DateTime.MinValue;
             //send other parameters on start or when took an upgrade
+            state = new HealthFull(this.health);
         }
         public Class() { }
         #region PowerUps and Items
@@ -186,9 +189,9 @@ namespace Predictor_SERVER.Character
             int pad = 5;
             if (keyData == Keys.Left)
             {
-                if (this.coordinates.Item1 > this.speed + pad)
+                if (this.coordinates.Item1 > getSpeed() + pad)
                 {
-                    this.coordinates.Item1 -= this.speed;
+                    this.coordinates.Item1 -= getSpeed();
                 }
                 else
                 {
@@ -197,9 +200,9 @@ namespace Predictor_SERVER.Character
             }
             else if (keyData == Keys.Right)
             {
-                if (this.coordinates.Item1 + this.speed + this.size < map.size)
+                if (this.coordinates.Item1 + getSpeed() + this.size < map.size)
                 {
-                    this.coordinates.Item1 += this.speed;
+                    this.coordinates.Item1 += getSpeed();
                 }
                 else
                 {
@@ -208,9 +211,9 @@ namespace Predictor_SERVER.Character
             }
             if (keyData == Keys.Up)
             {
-                if (this.coordinates.Item2 > this.speed + pad)
+                if (this.coordinates.Item2 > getSpeed() + pad)
                 {
-                    this.coordinates.Item2 -= this.speed;
+                    this.coordinates.Item2 -= getSpeed();
                 }
                 else
                 {
@@ -220,9 +223,9 @@ namespace Predictor_SERVER.Character
             }
             else if (keyData == Keys.Down)
             {
-                if (this.coordinates.Item2 + this.speed + this.size < map.size)
+                if (this.coordinates.Item2 + getSpeed() + this.size < map.size)
                 {
-                    this.coordinates.Item2 += this.speed;
+                    this.coordinates.Item2 += getSpeed();
                 }
                 else
                 {
@@ -241,6 +244,23 @@ namespace Predictor_SERVER.Character
         {
             lastAttack = DateTime.Now;
             return weapon.attack(this, direction);
+        }
+
+        public new bool takeDamage(int damage)
+        {
+            this.health -= damage;
+            state.CheckDamage(this);
+            Console.WriteLine("Health: {0}", health);
+            Console.WriteLine("State: {0}", state.GetType());
+            return this.health <= 0;
+        }
+        public int getDamage()
+        {
+            return (int)Math.Round(damage * state.damageMultiplier);
+        }
+        public int getSpeed()
+        {
+            return (int)Math.Round(speed * state.speedMultiplier);
         }
     }
 }

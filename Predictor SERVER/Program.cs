@@ -470,7 +470,7 @@ namespace Predictor_SERVER
                     {
                         try
                         {
-                            player.playerClass.takeDamage(projectile.attacker.damage);
+                            player.playerClass.takeDamage(projectile.attacker.getDamage());
                             projectile.hit = true;
                             break;
 
@@ -492,7 +492,7 @@ namespace Predictor_SERVER
                     {
                         try
                         {
-                            if (npc.takeDamage(projectile.attacker.damage))
+                            if (npc.takeDamage(projectile.attacker.getDamage()))
                             {
                                 toRemoveNpc.Add(index);
                             }
@@ -515,7 +515,7 @@ namespace Predictor_SERVER
                             try
                             {
                                 projectile.hit = true;
-                                obs.takeDamage(projectile.attacker.damage);
+                                obs.takeDamage(projectile.attacker.getDamage());
                                 if (obs.IsDestryed())
                                 {
                                     Variables.obstacles[matchId].RemoveItemAt(ObsIterator.GetCurrentIndex());

@@ -60,6 +60,11 @@
     <Compile Include="Character\Gunner.cs" />
     <Compile Include="Character\GunnerCreator.cs" />
     <Compile Include="Character\GunWeapon.cs" />
+    <Compile Include="Character\HealthDamaged.cs" />
+    <Compile Include="Character\HealthFull.cs" />
+    <Compile Include="Character\HealthHalf.cs" />
+    <Compile Include="Character\HealthLow.cs" />
+    <Compile Include="Character\HealthState.cs" />
     <Compile Include="Character\NpcDeathItemType.cs" />
     <Compile Include="Character\NpcDeathPowerUpType.cs" />
     <Compile Include="Character\NpcDeath.cs" />
