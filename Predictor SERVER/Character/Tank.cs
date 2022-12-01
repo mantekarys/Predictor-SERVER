@@ -10,12 +10,13 @@ namespace Predictor_SERVER.Character
     {
         public Tank(int size, int x, int y)
         {
-            this.speed = 3;
-            this.damage = 5;
-            this.health = 15;
+            this.speed = 4;
+            this.damage = 1;
+            this.health = 100;
             this.size = size;
             this.coordinates = (x, y);
-            this.weapon = new ExplosiveWeapon("gun", 500);
+            this.weapon = new GunWeapon("gun", 500);
+            this.state = new HealthFull(health);
         }
     }
 }

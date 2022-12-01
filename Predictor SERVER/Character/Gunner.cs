@@ -11,11 +11,12 @@ namespace Predictor_SERVER.Character
         public Gunner(int size, int x, int y)
         {
             this.speed = 5;
-            this.damage = 1;
-            this.health = 5;
+            this.damage = 2;
+            this.health = 10;
             this.size = size;
             this.coordinates = (x, y);
             this.weapon = new GunWeapon("gun", 200);
+            this.state = new HealthFull(health);
         }
     }
 }
