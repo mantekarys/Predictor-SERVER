@@ -31,5 +31,15 @@ namespace Predictor_SERVER.Server
         {
 
         }
+
+        public List<Player> CopyPlayers()
+        {
+            List<Player> otherPlayers = new List<Player>();
+            foreach (Player p in this.players)
+            {
+                otherPlayers.Add(p.Clone());
+            }
+            return otherPlayers;
+        }
     }
 }
