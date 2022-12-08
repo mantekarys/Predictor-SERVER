@@ -13,7 +13,7 @@ namespace Predictor_SERVER.Server
     {
         public override void HandleLog(int code, HashSet<Keys> keys)
         {
-            if(code == 752)
+            if(code > 600 && code <= 800)
             {
                 using (StreamWriter sw = File.AppendText(path))
                 {
@@ -21,7 +21,7 @@ namespace Predictor_SERVER.Server
                     sw.WriteLine(string.Format("{0} handled log", this.GetType().Name));
                 }
             }
-            else if (successor != null)
+            if (successor != null)
             {
                 successor.HandleLog(code, keys);
             }

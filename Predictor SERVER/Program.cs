@@ -32,7 +32,8 @@ namespace Predictor_SERVER
         public static List<List<Projectile>> projectiles = new List<List<Projectile>>();
         public static List<Server.Match> matches = new List<Server.Match>();
         public static List<List<string>> matchIds = new List<List<string>>();
-        
+        public static List<List<string>> allMessages = new List<List<string>>();
+
         internal static UseFirstItem useFirstItem = new UseFirstItem();  // command class for useage of first item
         internal static UseSecondItem useSecondItem = new UseSecondItem();  // command class for useage of second item
         internal static UseThirdItem useThirdItem = new UseThirdItem();  // command class for useage of third item
@@ -95,6 +96,7 @@ namespace Predictor_SERVER
                 string text = "";
                 int matchId = -1;
                 int ready = 0;
+                string matchMessage;
 
                 HashSet<Keys> keys = new HashSet<Keys>();
                 (int, int) mouse = (0, 0);
@@ -111,10 +113,14 @@ namespace Predictor_SERVER
                 }
                 else //gets game info
                 {
-                    (keys, mouse, which, matchId) = JsonConvert.DeserializeObject<(HashSet<Keys>, (int, int), int, int)>(e.Data);
+                    (keys, mouse, which, matchId, matchMessage) = JsonConvert.DeserializeObject<(HashSet<Keys>, (int, int), int, int, string)>(e.Data);
+                    if (!matchMessage.IsNullOrEmpty())
+                    {
+                        Variables.allMessages[matchId].Add(matchMessage);
+                    }
                 }
 
-                l1.HandleLog(code, keys);
+                //l1.HandleLog(code, keys);
 
                 if (code == 752)//creates match
                 {
@@ -130,6 +136,8 @@ namespace Predictor_SERVER
                     Variables.pickables.Add(new PickUpAggregate());
                     Variables.pickables[matchId][0] = new DamagePotion((350, 350));
                     Variables.projectiles.Add(new List<Projectile>());
+                    Variables.allMessages.Add(new List<string>());
+                    Variables.allMessages[matchId].Add("Start of conversation");
 
                     //Npc n1 = new Npc(15, 5, 5, 1, 30, 30);
                     //n1.selectDeathType("item");
@@ -400,7 +408,7 @@ namespace Predictor_SERVER
             }
             var message = JsonConvert.SerializeObject((Variables.matches[matchId].players.ToList(), Variables.map,
                 Variables.pickables[matchId].GetList().ToList(), projList, Variables.traps[matchId].GetList().ToList(),
-                Variables.obstacles[matchId].GetList().ToList(), Variables.npcs[matchId].ToList()));
+                Variables.obstacles[matchId].GetList().ToList(), Variables.npcs[matchId].ToList(), Variables.allMessages[matchId].ToList()));
             
             foreach (var item in Variables.matchIds[matchId])
             {
