@@ -21,17 +21,17 @@ namespace Predictor_SERVER
 {
     public static class Variables
     {
-        public static List<MapObject> mapO = new List<MapObject>();
-        public static List<TrapAggregate> traps = new List<TrapAggregate>();
-        public static List<ObstacleAggregate> obstacles = new List<ObstacleAggregate>();
-        public static Map.Map map = new Map.Map("Map1", mapO);
-        public static int howMany = 0;
-        public static WebSocketSessionManager sesions;
+        public static List<MapObject> mapO = new List<MapObject>();  //temp?
+        public static List<TrapAggregate> traps = new List<TrapAggregate>(); // traps
+        public static List<ObstacleAggregate> obstacles = new List<ObstacleAggregate>(); // obstacles
+        public static Map.Map map = new Map.Map("Map1", mapO); //temp?
+        public static int howMany = 0; //temp?
+        public static WebSocketSessionManager sesions; //active connections with their ids?
         public static bool started = false;
-        public static List<PickUpAggregate> pickables = new List<PickUpAggregate>();
-        public static List<List<Projectile>> projectiles = new List<List<Projectile>>();
-        public static List<Server.Match> matches = new List<Server.Match>();
-        public static List<List<string>> matchIds = new List<List<string>>();
+        public static List<PickUpAggregate> pickables = new List<PickUpAggregate>(); // pickups 
+        public static List<List<Projectile>> projectiles = new List<List<Projectile>>();    //projectiles
+        public static List<Server.Match> matches = new List<Server.Match>();    // matches
+        public static List<List<string>> matchIds = new List<List<string>>();   // player connection ids?
         
         internal static UseFirstItem useFirstItem = new UseFirstItem();  // command class for useage of first item
         internal static UseSecondItem useSecondItem = new UseSecondItem();  // command class for useage of second item
@@ -72,7 +72,7 @@ namespace Predictor_SERVER
     {
         Random rnd = new Random(978);
         Logger log = Logger.getInstance();
-
+        List<Memento> mementos = new List<Memento>();
         LoggerHandler l1 = new CreateLoggerHandler();
         LoggerHandler l2 = new JoinLoggerHandler();
         LoggerHandler l3 = new ReadyLoggerHandler();
@@ -174,6 +174,7 @@ namespace Predictor_SERVER
                     }
                     if (Variables.matches[matchId].ready == Variables.matches[matchId].peopleAmount)
                     {
+                        mementos.Add(new Memento(matchId, Variables.matches[matchId].CopyPlayers()));
                         var thread = new Thread(
                                 () => SendMessages(matchId));
                         thread.Start();
@@ -411,10 +412,33 @@ namespace Predictor_SERVER
                 player.playerClass.activeItemTimeExperationCheck();
             }
             List<ProjectileLeaf> projList = new List<ProjectileLeaf>();
-            foreach (var proj in Variables.projectiles[matchId].ToList())
-            {
-                projList.AddRange(proj.getNotHitList());
+            if (Variables.matches[matchId].players.Count == 1) {
+                if (Variables.matches[matchId].players[0].playerClass.health <= 0)
+                {
+                    MemState memTemp= mementos.Find(mem => mem.GetMatchId() == matchId).GetState();
+                    Variables.matches[matchId].players = memTemp.players;
+                }
             }
+            else if (Variables.matches[matchId].players.Count > 1) 
+            { 
+                int aliveCount= Variables.matches[matchId].players.Count;
+                foreach(Player player in Variables.matches[matchId].players)
+                {
+                    if (Variables.matches[matchId].players[0].playerClass.health <= 0)
+                    {
+                        aliveCount--;
+                    }
+                }
+                if(aliveCount <= 1)
+                {
+                    MemState memTemp = mementos.Find(mem => mem.GetMatchId() == matchId).GetState();
+                    Variables.matches[matchId].players = memTemp.players;
+                }
+            }
+            foreach (var proj in Variables.projectiles[matchId].ToList())
+                {
+                    projList.AddRange(proj.getNotHitList());
+                }
             var message = JsonConvert.SerializeObject((Variables.matches[matchId].players.ToList(), Variables.map,
                 Variables.pickables[matchId].GetList().ToList(), projList, Variables.traps[matchId].GetList().ToList(),
                 Variables.obstacles[matchId].GetList().ToList(), Variables.npcs[matchId].ToList()));

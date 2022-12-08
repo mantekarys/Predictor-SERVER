@@ -20,5 +20,11 @@ namespace Predictor_SERVER.Server
             playerClass = c;
             this.userName = userName;
         }
+        public Player Clone()
+        {
+            Player otherPlayer = (Player)this.MemberwiseClone();
+            otherPlayer.playerClass = playerClass.Clone();
+            return otherPlayer;
+        }
     }
 }

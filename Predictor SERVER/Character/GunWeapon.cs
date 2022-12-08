@@ -17,5 +17,11 @@ namespace Predictor_SERVER.Character
         {
             return new ProjectileLeaf(20, 8, attacker.coordinates, direction, attacker);
         }
+
+        internal override WeaponAlgorithm Clone()
+        {
+            GunWeapon clone = (GunWeapon)this.MemberwiseClone();
+            return clone;
+        }
     }
 }

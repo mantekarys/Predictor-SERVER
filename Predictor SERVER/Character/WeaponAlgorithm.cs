@@ -11,5 +11,8 @@ namespace Predictor_SERVER.Character
         public string name;
         public int attackSpeed;
         public abstract Projectile attack(Class attacker, int direction);
+
+        internal abstract WeaponAlgorithm Clone();
+
     }
 }

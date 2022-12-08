@@ -17,5 +17,11 @@ namespace Predictor_SERVER.Character
         {
             return new ProjectileComposite(10, 6, attacker.coordinates, direction, attacker,3,2);
         }
+
+        internal override WeaponAlgorithm Clone()
+        {
+            ExplosiveWeapon clone = (ExplosiveWeapon)this.MemberwiseClone();
+            return clone;
+        }
     }
 }

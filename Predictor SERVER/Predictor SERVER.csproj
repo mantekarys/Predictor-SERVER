@@ -129,6 +129,7 @@
     <Compile Include="Server\ITarget.cs" />
     <Compile Include="Server\LoggerHandler.cs" />
     <Compile Include="Server\Logger.cs" />
+    <Compile Include="Server\Memento.cs" />
     <Compile Include="Server\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

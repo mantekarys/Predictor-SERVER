@@ -22,7 +22,19 @@ namespace Predictor_SERVER.Character
         public WeaponAlgorithm weapon;
         public DateTime lastAttack;
         public HealthState state;
-      
+
+        internal Class Clone()
+        {
+            Class clone = (Class)this.MemberwiseClone();
+            clone.weapon = weapon.Clone();
+            clone.inventory=new List<Item>();
+            clone.activeItems = new List<Item>();
+            clone.upgrades=new Dictionary<string, int>();
+            clone.state = new HealthFull(this.health);
+            return clone;
+
+        }
+
         class Message
         {
             List<string> buttons;
