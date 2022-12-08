@@ -87,6 +87,10 @@
     <Compile Include="Character\UseThirdItem.cs" />
     <Compile Include="Character\UseSecondItem.cs" />
     <Compile Include="Character\UseFirstItem.cs" />
+    <Compile Include="Character\Visitor.cs" />
+    <Compile Include="Character\VisitorDamage.cs" />
+    <Compile Include="Character\VisitorHealth.cs" />
+    <Compile Include="Character\VisitorSpeed.cs" />
     <Compile Include="Map\PickUpIterator.cs" />
     <Compile Include="Map\PickUpAggregate.cs" />
     <Compile Include="Map\TrapIterator.cs" />

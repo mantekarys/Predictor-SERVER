@@ -10,6 +10,7 @@ using System.Globalization;
 using Predictor_SERVER.Map;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Linq.Expressions;
 
 namespace Predictor_SERVER.Character
 {
@@ -261,6 +262,10 @@ namespace Predictor_SERVER.Character
         public int getSpeed()
         {
             return (int)Math.Round(speed * state.speedMultiplier);
+        }
+        public void Accept(Visitor visitor)
+        {
+            visitor.Visit(this);
         }
     }
 }

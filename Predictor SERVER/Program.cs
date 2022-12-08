@@ -366,6 +366,23 @@ namespace Predictor_SERVER
         }
         public void Broadcast(int matchId)
         {
+            if (Variables.matches[matchId].getTick())
+            {
+                int state = Variables.matches[matchId].getState();
+                switch (state)
+                {
+                    case 0:
+                        Variables.matches[matchId].Accept(new VisitorSpeed());
+                        break;
+                    case 1:
+                        Variables.matches[matchId].Accept(new VisitorDamage());
+                        break;
+                    case 2:
+                        Variables.matches[matchId].Accept(new VisitorHealth());
+                        break;
+                }
+            }
+            
             List<int> npcsToAdd = BulletMovement(matchId);
             foreach (var proj in Variables.projectiles[matchId].ToList())
             {
