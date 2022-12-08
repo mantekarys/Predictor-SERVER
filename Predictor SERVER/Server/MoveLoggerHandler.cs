@@ -14,7 +14,7 @@ namespace Predictor_SERVER.Server
     {
         public override void HandleLog(int code, HashSet<Keys> keys)
         {
-            if (code == -1 && keys.Count > 0)
+            if (code < 0 && keys.Count > 0)
             {
                 using (StreamWriter sw = File.AppendText(path))
                 {
@@ -22,7 +22,7 @@ namespace Predictor_SERVER.Server
                     sw.WriteLine(string.Format("{0} handled log", this.GetType().Name));
                 }
             }
-            else if (successor != null)
+            if (successor != null)
             {
                 successor.HandleLog(code, keys);
             }
